@@ -1,0 +1,95 @@
+<header id="header" class="header d-flex align-items-center sticky-top">
+  <div class="container position-relative d-flex align-items-center justify-content-between">
+
+    <a href="index.html" class="logo d-flex align-items-center">
+      <img src="assets/logo.png" alt="logo">
+    </a>
+
+    <nav id="navmenu" class="navmenu">
+      <ul>
+        <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Trang chủ</a></li>
+        <li class="dropdown"><a href="#"><span>Thể loại</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+          <ul>
+            <li><a href="#">Team</a></li>
+            <li><a href="#">Testimonials</a></li>
+            <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+              <ul>
+                <li><a href="#">Deep Dropdown 1</a></li>
+                <li><a href="#">Deep Dropdown 2</a></li>
+                <li><a href="#">Deep Dropdown 3</a></li>
+                <li><a href="#">Deep Dropdown 4</a></li>
+                <li><a href="#">Deep Dropdown 5</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a routerLink="products" routerLinkActive="active">Sản phẩm</a></li>
+        <li><a href="#">Portfolio</a></li>
+        <li><a href="#">Pricing</a></li>
+        <li><a routerLink="blogs" routerLinkActive="active">Blogs</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+      <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+    </nav>
+
+    <div class="header-links d-flex align-content-center">
+      @if (!logined){
+        <button class="me-2 fw-bold sign" (click)="navigateToSignInPage()">Đăng nhập</button>
+        <button class="me-2 fw-bold sign" (click)="navigateToSignUpPage()">Đăng ký</button>
+      } @else {
+        <div class="d-flex align-items-center">
+          <p-overlay-badge value="5" severity="success" badgeSize="small">
+            <p-button [rounded]="true" severity="success" (onClick)="navigateToCartPage()">
+              <i class="pi pi-shopping-bag" style="font-size: 1.2rem; padding: 5px;"></i>
+            </p-button>
+          </p-overlay-badge>
+          <p-overlay-badge value="5" severity="danger" badgeSize="small">
+            <p-button [rounded]="true" severity="success" class="ms-3" (onClick)="visible = true;">
+              <i class="pi pi-bell" style="font-size: 1.2rem; padding: 5px;"></i>
+            </p-button>
+          </p-overlay-badge>
+          <p-splitbutton label="Save" [model]="items" rounded class="p-0 ms-3">
+            <ng-template #content class="p-0">
+            <span class="flex items-center font-bold" style="width: 30px; height: 30px;">
+                <img alt="logo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzwHFskk5Q5AH4B8g_ph6JZUrbotBovTkl8g&s"
+                     class="w-100 h-100 rounded-circle" />
+            </span>
+            </ng-template>
+            <ng-template #dropdownicon>
+              <i class="pi pi-spin pi-cog" style="font-size: 1.5rem"></i>
+            </ng-template>
+          </p-splitbutton>
+        </div>
+      }
+    </div>
+  </div>
+</header>
+<p-drawer [(visible)]="visible" header="Thông báo" position="right">
+  <p-accordion value="0">
+    <p-accordion-panel value="0">
+      <p-accordion-header>
+        <ng-template #toggleicon let-active="active">
+          @if (active) {
+            <i class="pi pi-minus"></i>
+          } @else {
+            <i class="pi pi-plus"></i>
+          }
+        </ng-template>
+        <span class="d-flex align-items-center gap-2 w-full">
+                    <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" shape="circle" />
+                    <span class="font-bold whitespace-nowrap">Amy Elsner</span>
+                    <p-badge value="3" class="ml-auto mr-2" />
+          </span>
+      </p-accordion-header>
+      <p-accordion-content>
+        <p class="m-0">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
+          laborum.
+        </p>
+      </p-accordion-content>
+    </p-accordion-panel>
+  </p-accordion>
+</p-drawer>
