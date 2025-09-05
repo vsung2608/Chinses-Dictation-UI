@@ -25,10 +25,14 @@
 }
 
 .header .header-links button{
-  background: #059652;
+  background: #00a88e;
   color: #ffffff;
   border: none;
   font-size: 13px;
+}
+
+.header .header-links .button-color{
+  background: #00a88e;
 }
 
 .header .header-links .sign{
@@ -52,8 +56,8 @@
 
 .header .header-links button:hover{
 background: #ffffff;
-color: #059652;
-border: 1px solid #059652;
+color: #00a88e;
+border: 1px solid #00a88e;
 }
 
 @media (max-width: 1200px) {

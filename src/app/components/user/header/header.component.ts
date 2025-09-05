@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, NgModule} from '@angular/core';
 import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {SplitButtonModule} from 'primeng/splitbutton';
 import {MenuItem, PrimeIcons} from 'primeng/api';
@@ -11,21 +11,20 @@ import {DrawerModule} from 'primeng/drawer';
 
 
 @Component({
-  selector: 'app-header',
-  imports: [
-    RouterLink,
-    RouterLinkActive,
-    SplitButtonModule,
-    ButtonModule,
-    OverlayBadge,
-    AccordionModule,
-    Avatar,
-    Badge,
-    DrawerModule
-  ],
-  templateUrl: './header.component.html',
-  standalone: true,
-  styleUrls: ['./header.component.css']
+    selector: 'app-header',
+    imports: [
+        RouterLink,
+        RouterLinkActive,
+        SplitButtonModule,
+        ButtonModule,
+        OverlayBadge,
+        AccordionModule,
+        Avatar,
+        Badge,
+        DrawerModule
+    ],
+    templateUrl: './header.component.html',
+    styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
   items: MenuItem[];
@@ -37,11 +36,21 @@ export class HeaderComponent {
   constructor(private router: Router) {
     this.items = [
       {
-        label: 'Update',
+        label: 'Light Mode',
+        icon: 'pi pi-power-off',
+        command: () => {
+          this.backHomePage()
+        }
+      },
+      {
+        label: 'Dark Mode',
         icon: 'pi pi-refresh',
         command: () => {
           this.navigateToUpdateInformationPage()
         }
+      },
+      {
+        separator: true,
       },
       {
         label: 'Delete',

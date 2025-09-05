@@ -1,0 +1,241 @@
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-xl-10 col-lg-11">
+            <div class="main-container">
+                <!-- Header Section -->
+                <div class="header-section">
+                    <h1 class="header-title">Luyện Chép Chính Tả</h1>
+                    <p class="header-subtitle">Nghe và viết chính xác những gì bạn nghe được</p>
+                    <div class="lesson-info">
+                        <div class="info-item">
+                            <span class="info-number">{{ lesson?.displayOrder }}</span>
+                            <span class="info-label">Bài học</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-number">{{ lesson?.level }}</span>
+                            <span class="info-label">Cấp độ</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-number">{{ lesson?.estimatedDurationSeconds }}</span>
+                            <span class="info-label">Thời lượng</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="audio-section col-6">
+                        <div class="audio-player">
+                            <audio #audioPlayer [src]="lesson?.audioFilePath"></audio>
+
+                            <h3 class="audio-title">
+                                <i class="fas fa-headphones me-2"></i>
+                                {{lesson?.titleChinese}} / {{lesson?.titleVietnamese}}
+                            </h3>
+
+                            <div class="audio-controls">
+                                <button class="play-button">
+                                    <i class="fas" [ngClass]="isPlaying ? 'fa-pause' : 'fa-play'"></i>
+                                </button>
+
+                                <div class="speed-control">
+                                    <span class="me-2">Tốc độ:</span>
+                                    <button *ngFor="let s of speeds" class="speed-btn"
+                                        [class.active]="s === currentSpeed" (click)="setSpeed(s)">
+                                        {{ s }}x
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="progress-container">
+                                <div class="progress-bar-custom">
+                                    <div class="progress-fill" [style.width.%]="progress"></div>
+                                </div>
+                                <div class="time-display">
+                                    <span>{{ formatTime(currentTime) }}</span>
+                                    <span>{{ formatTime(duration) }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <p-tabs value="0" scrollable>
+                                <p-tablist>
+                                    <ng-template #previcon>
+                                        <i class="pi pi-minus"></i>
+                                    </ng-template>
+                                    <p-tab value="0">
+                                        <span class="font-bold whitespace-nowrap">Mô tả bài học</span>
+                                    </p-tab>
+                                    <p-tab value="1">
+                                        <span class="font-bold whitespace-nowrap">Nội dung bài nghe</span>
+                                    </p-tab>
+                                    <p-tab value="2">
+                                        <span class="font-bold whitespace-nowrap">Bình luận</span>
+                                        <p-badge value="2" styleClass="main-color" />
+                                    </p-tab>
+                                    <ng-template #nexticon>
+                                        <i class="pi pi-plus"></i>
+                                    </ng-template>
+                                </p-tablist>
+                                <p-tabpanels>
+                                    <p-tabpanel value="0">
+                                        <div class="instruction">
+                                            <h5>
+                                                <i class="fas fa-info-circle me-2"></i>
+                                                Hướng dẫn
+                                            </h5>
+                                            <p class="mb-0">
+                                                Nghe audio và viết lại chính xác những gì bạn nghe được. Bạn
+                                                có thể nghe lại
+                                                nhiều lần và sử dụng các công cụ hỗ trợ bên trên.</p>
+                                        </div>
+                                        <p class="m-0">
+                                            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptatibus,
+                                            suscipit. Ipsum exercitationem quod rerum nisi dolor provident nostrum
+                                            quidem! Impedit rem in amet, dolorem asperiores cupiditate facere? Natus,
+                                            iste veniam!
+                                        </p>
+                                    </p-tabpanel>
+                                    <p-tabpanel value="1">
+                                        @for(sentence of lesson?.sentences; track sentence.id){
+                                            <div class="mb-4">
+                                                <div class="fw-bold">{{ sentence.chineseText }}</div>
+                                                <div>{{ sentence.pinyinText }}</div>
+                                            </div>
+                                            }
+                                    </p-tabpanel>
+                                    <p-tabpanel value="2">
+                                        <section class="comment-section" *ngIf="comments$ | async as comments">
+                                            @for (comment of comments; track comment.id){
+                                            <div class="comment mb-2 mb-3" *ngIf="replies$ | async as replies">
+                                                <div class="avatar-line-vertical" *ngIf="comment.replyCount > 0"></div>
+                                                <div class="d-flex mb-2">
+                                                    <div class="avatar-wrapper position-relative me-2">
+                                                        <div class="avatar">
+                                                            <img [src]="comment.userAvatarUrl" alt="avatar"
+                                                                class="rounded-circle" width="40" height="40" />
+                                                        </div>
+                                                        <div class="avatar-line"></div>
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-bold"><a class="text-dark me-2">
+                                                                {{comment.userName}} </a> <a class="reply"
+                                                                (click)="reply(comment.id, comment.userName)"><i
+                                                                    class="bi bi-reply-fill"></i> Trả lời </a></div>
+                                                        <div class="content">
+                                                            {{comment.content}}
+                                                        </div>
+                                                        <div [style]="'font-size: 12px'">
+                                                            <span class="fw-bold me-4"> {{comment.createdAt}} </span>
+                                                            <span class="fw-bold">11 like</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="fw-bold ms-5 mb-2" (click)="toggleReplies(comment.id)"
+                                                    [style]="'cursor: pointer'" *ngIf="comment.replyCount > 0">
+                                                    {{ expandedComments[comment.id] ? 'Ẩn bớt bình luận' : 'Xem thêm ' +
+                                                    comment.replyCount + ' bình luận' }}
+                                                </div>
+                                                <div *ngIf="expandedComments[comment.id]">
+                                                    @for (reply of replies; track reply.id){
+                                                    @if(reply.parentCommentId === comment.id){
+                                                    <div class="child-comment ms-5 mb-2">
+                                                        <div class="dot-on-line"></div>
+                                                        <div class="d-flex mb-2">
+                                                            <div class="avatar-wrapper position-relative me-2">
+                                                                <div class="avatar">
+                                                                    <span class="circle-dot"></span>
+                                                                    <img [src]="reply.userAvatarUrl" alt="avatar"
+                                                                        class="rounded-circle" width="40" height="40" />
+                                                                </div>
+                                                                <div class="avatar-line"></div>
+                                                            </div>
+                                                            <div>
+                                                                <div class="fw-bold"><a href=""
+                                                                        class="text-dark me-2">{{reply.userName}}</a> <a
+                                                                        href="#" class="reply"><i
+                                                                            class="bi bi-reply-fill"></i> Reply</a>
+                                                                </div>
+                                                                <div class="content">{{reply.content}}</div>
+                                                                <div [style]="'font-size: 12px'">
+                                                                    <span
+                                                                        class="fw-bold me-4">{{reply.createdAt}}</span>
+                                                                    <span class="fw-bold me-4">11 like</span>
+                                                                    @if(comment.userId === '1'){
+                                                                    <span class="fw-bold me-4">Xóa bình luận</span>
+                                                                    <span class="fw-bold me-4">Sửa bình luận</span>
+                                                                    }@else{
+                                                                    <span class="fw-bold me-4">Báo cáo bình luận</span>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    }
+                                                    }
+                                                </div>
+                                            </div>
+                                            }
+                                        </section>
+                                        <div class="comment-form">
+                                            <input #replyInput placeholder="Nhập bình luận ở đây"
+                                                [(ngModel)]="commentContent" (keydown)="handleKeyDown($event)">
+                                            <button type="button" (click)="postComment()">Gui</button>
+                                        </div>
+                                    </p-tabpanel>
+                                </p-tabpanels>
+                            </p-tabs>
+                        </div>
+                    </div>
+
+                    <!-- Dictation Section -->
+                    <div class="dictation-section col-6">
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-content-center">
+                                <label for="dictationInput" class="form-label fw-semibold">
+                                    <i class="fas fa-pen me-2"></i>
+                                    Viết những gì bạn nghe được:
+                                </label>
+                                <div>
+                                    Báo cáo <i class="fa-regular fa-flag"></i>
+                                </div>
+                            </div>
+
+                            <textarea class="dictation-input" id="dictationInput"
+                                placeholder="Bắt đầu nhập văn bản tại đây..." oninput="updateWordCount()"></textarea>
+                            <div class="word-count" id="wordCount">0 từ</div>
+                        </div>
+
+                        <div class="answer-display mt-3" *ngIf="isCorrect && currentSentence">
+                            <div class="chinese-text">
+                                <span class="label">Hán tự:</span>
+                                <span class="content">{{currentSentence?.chineseText}}</span>
+                            </div>
+                            <div class="pinyin-text">
+                                <span class="label">Pinyin:</span>
+                                <span class="content">{{currentSentence?.pinyinText}}</span>
+                            </div>
+                            <div class="vietnamese-text">
+                                <span class="label">Nghĩa:</span>
+                                <span class="content">{{currentSentence?.vietnameseTranslation}}</span>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn btn-custom btn-primary-custom" (click)="checkAnswer()"
+                                [disabled]="!userAnswer.trim()">
+                                <i class="fas fa-check me-2"></i>
+                                Kiểm tra đáp án
+                            </button>
+                            <button class="btn btn-next ms-2" (click)="nextExercise()" [disabled]="!showResult">
+                                <i class="fas fa-arrow-right me-2"></i>
+                                Bài tiếp theo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

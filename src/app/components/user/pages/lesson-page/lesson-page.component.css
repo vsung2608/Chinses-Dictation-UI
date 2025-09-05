@@ -1,0 +1,204 @@
+.section-container {
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.filter {
+    width: 500px;
+    background: white;
+    border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.filter input {
+    border: none;
+    box-shadow: none;
+    outline: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+
+}
+
+.filter input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.filter i {
+    background: #00a88e;
+    color: white;
+    padding: 10px 30px 10px 20px;
+    font-size: 25px;
+    border-bottom-right-radius: 30px;
+    border-top-right-radius: 30px;
+    pointer-events: cursor;
+}
+
+.section-container.expanded {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.section-container.expanded .section-header {
+    color: white;
+    background: #00a88e;
+    margin-bottom: 0;
+}
+
+.note .child-note {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+.note div:nth-child(1) .child-note {
+    background: #10b981;
+}
+
+.note div:nth-child(2) .child-note {
+    background: #f59e0b;
+}
+
+.note div:nth-child(3) .child-note {
+    background: #ef4444;
+}
+
+.section-header {
+    padding: 20px 25px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 18px;
+    user-select: none;
+    transition: background-color 0.3s ease;
+}
+
+.section-header:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.star {
+    color: #ffd700;
+    font-size: 20px;
+}
+
+.progress-badge {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.expand-icon {
+    transition: transform 0.3s ease;
+}
+
+.section-container.expanded .expand-icon {
+    transform: rotate(180deg);
+}
+
+.lesson-card {
+    border-radius: 10px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: white;
+    height: 100%;
+    border-bottom: 10px solid #00a88e;
+    box-shadow: 0 10px 25px rgb(34 34 34 / .18);
+}
+
+.lesson-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+}
+
+.lesson-star {
+    font-size: 18px;
+}
+
+.lesson-star.green {
+    color: #10b981;
+}
+
+.lesson-star.blue {
+    color: #3b82f6;
+}
+
+.lesson-number {
+    font-weight: 700;
+    color: #334155;
+}
+
+.lesson-title {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.lesson-meta {
+    font-size: 13px;
+    color: #64748b;
+}
+
+.diamond-icon {
+    color: #06b6d4;
+    font-size: 16px;
+}
+
+.section-content {
+    background: white;
+    padding: 0;
+    overflow: hidden;
+}
+
+.section-content.show {
+    padding: 25px;
+}
+
+/* Animation cho lesson cards */
+.lesson-card {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+.lesson-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.lesson-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.lesson-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.lesson-card:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.lesson-card:nth-child(5) {
+    animation-delay: 0.5s;
+}
+
+.lesson-card:nth-child(6) {
+    animation-delay: 0.6s;
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

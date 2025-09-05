@@ -3,6 +3,7 @@ import { UserLayoutComponent } from './layout/user-layout/user-layout.component'
 import { AdminLayoutComponent } from './layout/admin-layout/admin-layout.component';
 import { HomePageComponent } from './components/user/pages/home-page/home-page.component';
 import { LessonPageComponent } from './components/user/pages/lesson-page/lesson-page.component';
+import { DetailLessonPageComponent } from './components/user/pages/detail-lesson-page/detail-lesson-page.component';
 
 export const routes: Routes = [
     {
@@ -10,7 +11,8 @@ export const routes: Routes = [
     component: UserLayoutComponent,
     children: [
       { path: '', component: HomePageComponent },
-      { path: 'lessons', component: LessonPageComponent}
+      { path: 'lessons', component: LessonPageComponent},
+      { path: 'lessons/:id', component: DetailLessonPageComponent}
     ]
   },
 
