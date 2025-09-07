@@ -25,14 +25,18 @@
 }
 
 .header .header-links button{
-  background: #00a88e;
+  background: #00a88e !important;
   color: #ffffff;
   border: none;
   font-size: 13px;
 }
 
 .header .header-links .button-color{
-  background: #00a88e;
+  background: #00a88e !important;
+}
+
+.background-color{
+  background: #00a88e !important;
 }
 
 .header .header-links .sign{
@@ -319,4 +323,8 @@ border: 1px solid #00a88e;
 
 ::ng-deep .p-drawer-right{
   width: 40rem !important;
+}
+
+::ng-deep .p-button{
+  background-color: #00a88e !important;
 }

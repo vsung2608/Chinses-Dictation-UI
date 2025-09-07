@@ -6,6 +6,8 @@ import {provideAnimationsAsync} from '@angular/platform-browser/animations/async
 import {providePrimeNG} from 'primeng/config';
 import {provideHttpClient, withInterceptors} from '@angular/common/http';
 import {ConfirmationService, MessageService} from 'primeng/api';
+import { authInterceptor } from './config/auth.interceptor';
+import { errorInterceptor } from './config/error.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,7 +16,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     MessageService,
     ConfirmationService,
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
     providePrimeNG({
       theme: {
         preset: Aura

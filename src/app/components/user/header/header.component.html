@@ -38,13 +38,13 @@
         <button class="me-2 fw-bold sign" (click)="navigateToSignUpPage()">Đăng ký</button>
       } @else {
         <div class="d-flex align-items-center">
-          <p-overlay-badge value="5" badgeSize="small" >
-            <p-button [rounded]="true" (onClick)="navigateToCartPage()" styleClass="button-color">
+          <p-overlay-badge value="5" badgeSize="small" styleClass="background-color">
+            <p-button [rounded]="true" (onClick)="navigateToCartPage()" (style)="'color: #00a88e'">
               <i class="pi pi-comments" style="font-size: 1.2rem; padding: 5px;"></i>
             </p-button>
           </p-overlay-badge>
           <p-overlay-badge value="5" severity="danger" badgeSize="small">
-            <p-button [rounded]="true" class="ms-3" (onClick)="visible = true;">
+            <p-button [rounded]="true" class="ms-3" (onClick)="visible = true;" styleClass="background-color">
               <i class="pi pi-bell" style="font-size: 1.2rem; padding: 5px;"></i>
             </p-button>
           </p-overlay-badge>

@@ -1,0 +1,45 @@
+
+<div class="back-ground">
+  <img src="assets/images/sign-background.jpg" alt="">
+  <div class="over-lay">
+    <div class="logo">
+      <img src="assets/images/logo.png" alt="">
+    </div>
+    <div class="tiltle fw-bold fs-3 mb-4">Đăng ký</div>
+    <div class="form-sign-in">
+      <form>
+        <div>
+          <div class="d-flex justify-content-between">
+            <div style="width: 47%">
+              <p-floatlabel variant="on" class="input">
+                <input pInputText id="firstName" autocomplete="off" #firstName/>
+                <label for="firstName">Họ</label>
+              </p-floatlabel>
+            </div>
+            <div style="width: 47%">
+              <p-floatlabel variant="on" class="input">
+                <input pInputText id="lastName" autocomplete="off" #lastName/>
+                <label for="lastName">Tên</label>
+              </p-floatlabel>
+            </div>
+          </div>
+        </div>
+        <p-floatlabel variant="on" class="input">
+          <input pInputText id="email" autocomplete="off" #email/>
+          <label for="email">Email</label>
+        </p-floatlabel>
+        <p-floatlabel variant="on" class="input">
+          <input pInputText id="password" autocomplete="off" #password/>
+          <label for="password">Mật khẩu</label>
+        </p-floatlabel>
+        <p class="login-card-footer-text mb-2">Bạn đã có tài khoản? <a routerLink="/auth/login">Đăng nhập tại đây</a></p>
+        <button type="button" class="mb-4">Đăng ký</button>
+
+        <nav class="diff login-card-footer-nav">
+          <a href="#!">Điều khoản sử dụng, </a>
+          <a href="#!">Chính sách bảo mật</a>
+        </nav>
+      </form>
+    </div>
+  </div>
+</div>

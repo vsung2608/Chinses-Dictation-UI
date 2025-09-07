@@ -1,0 +1,29 @@
+<div class="back-ground">
+  <img src="assets/images/sign-background.jpg" alt="">
+  <div class="over-lay">
+    <div class="logo">
+      <img src="assets/images/logo.png" alt="">
+    </div>
+    <div class="tiltle fw-bold fs-3 mb-4">Đăng nhập</div>
+    <div class="form-sign-in">
+      <form>
+        <p-floatlabel variant="on" class="input">
+          <input pInputText id="email" autocomplete="off" #email/>
+          <label for="email">Email hoặc Tài khoản</label>
+        </p-floatlabel>
+        <p-floatlabel variant="on" class="input">
+          <input pPassword id="password" autocomplete="off" type="password" #password/>
+          <label for="password">Mật khẩu</label>
+        </p-floatlabel>
+        <a href="#" class="forgot-password-link">Quên mật khẩu?</a>
+        <p class="login-card-footer-text mb-2">Bạn chưa có tài khoản? <a routerLink="/auth/register">Đăng ký tại đây</a></p>
+        <button type="button" class="mb-4" (click)="onClick()">Đăng nhập</button>
+
+        <nav class="diff login-card-footer-nav">
+          <a href="#!">Điều khoản sử dụng, </a>
+          <a href="#!">Chính sách bảo mật</a>
+        </nav>
+      </form>
+    </div>
+  </div>
+</div>
