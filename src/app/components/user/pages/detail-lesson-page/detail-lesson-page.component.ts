@@ -2,24 +2,32 @@ import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angula
 import { ActivatedRoute } from '@angular/router';
 import { BadgeModule } from 'primeng/badge';
 import { TabsModule } from 'primeng/tabs';
+import { DialogModule } from 'primeng/dialog';
 import { FormsModule } from '@angular/forms';
+import { TextareaModule } from 'primeng/textarea';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { InputTextModule } from 'primeng/inputtext';
 import { CommentService } from '../../../../services/comment/comment.service';
 import { Observable } from 'rxjs';
 import { CommentResponse } from '../../../../models/Comment';
 import { CommonModule } from '@angular/common';
 import { LessonService } from '../../../../services/lesson/lesson.service';
 import { Lesson, Sentence } from '../../../../models/Lesson';
-import { After } from 'v8';
+import { ButtonModule } from 'primeng/button';
+import { AvatarModule } from 'primeng/avatar';
 
 @Component({
   selector: 'app-detail-lesson-page',
-  imports: [TabsModule, BadgeModule, FormsModule, CommonModule],
+  imports: [TabsModule, BadgeModule, FormsModule, CommonModule, DialogModule, ButtonModule, AvatarModule, FloatLabelModule,
+   InputTextModule, TextareaModule],
   templateUrl: './detail-lesson-page.component.html',
   styleUrl: './detail-lesson-page.component.css'
 })
 export class DetailLessonPageComponent implements OnInit, AfterViewInit {
   @ViewChild('replyInput') replyInput!: ElementRef;
   @ViewChild('audioPlayer') audioPlayer!: ElementRef<HTMLAudioElement>;
+
+
   responsiveOptions: any[] | undefined;
   id = 0;
   expandedComments: { [commentId: string]: boolean } = {};
@@ -31,27 +39,32 @@ export class DetailLessonPageComponent implements OnInit, AfterViewInit {
   commentContent: string = ''
   parentCommentId: string = ''
 
+  titleReport: string = ''
+  reasonReport: string = ''
+
   currentSentenceIndex = 0;
   currentSentence: Sentence | null = null;
 
   showResult = false;
   isCorrect = false;
+  isIncorrect = false;
   userAnswer = '';
 
   isPlaying = false;
   currentSpeed = 1;
-  speeds = [0.5, 0.75, 1, 1.25];
+  currentSpeedIndex = 2;
+  speeds = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
   currentTime = 0;
   duration = 0;
   progress = 0;
 
+  visibleReportDialog = false;
+
   constructor(private route: ActivatedRoute, private commentService: CommentService, private lessonService: LessonService) { }
 
   ngAfterViewInit(): void {
     const audio = this.audioPlayer.nativeElement;
-    this.duration = this.lesson?.estimatedDurationSeconds || 0;
-    this.currentSentence = this.lesson?.sentences[0] || null;
 
     audio.addEventListener('timeupdate', () => {
       this.currentTime = audio.currentTime;
@@ -62,7 +75,11 @@ export class DetailLessonPageComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.id = Number(this.route.snapshot.paramMap.get('id'));
     this.lessonService.getDetailLessonById(this.id).pipe()
-      .subscribe(lesson => { this.lesson = lesson })
+      .subscribe(lesson => {
+        this.lesson = lesson;
+        this.currentSentence = this.lesson?.sentences[0] || null;
+        this.duration = this.lesson?.estimatedDurationSeconds || 0;
+      })
     this.commentService.loadComments(this.id, 1, 10)
     this.comments$ = this.commentService.comments$
     this.replies$ = this.commentService.replies$
@@ -103,18 +120,31 @@ export class DetailLessonPageComponent implements OnInit, AfterViewInit {
     this.userAnswer = '';
     this.showResult = false;
     this.isCorrect = false;
+    this.isIncorrect = false;
   }
 
   checkAnswer() {
+    if (this.currentSentence?.chineseText.trim() === this.userAnswer.trim()) {
+      this.isCorrect = true;
+      this.showResult = true;
+    } else {
+      this.higlightIncorrectAnswer();
+      this.isIncorrect = true;
+    }
   }
 
   nextExercise() {
     this.currentSentenceIndex++;
     if (this.currentSentenceIndex >= (this.lesson?.totalSentences ?? 0)) {
-      // Reset to beginning or show completion message
       this.currentSentenceIndex = 0;
     }
     this.loadCurrentExercise();
+    this.playAudioSegment();
+  }
+
+  skipExercise() {
+    this.userAnswer = this.currentSentence?.chineseText || '';
+    this.checkAnswer();
   }
 
   loadCurrentExercise() {
@@ -124,24 +154,83 @@ export class DetailLessonPageComponent implements OnInit, AfterViewInit {
     }
   }
 
+  focusInput() {
+    this.isIncorrect = false;
+  }
+
+  higlightIncorrectAnswer() {
+    if (!this.currentSentence) return;
+    let incorrectAnswers = '';
+    const correctText = this.currentSentence?.chineseText;
+    const size = correctText.length - this.userAnswer.length;
+
+    for (let i = 0; i < this.userAnswer.length; i++) {
+      if (correctText[i] === this.userAnswer[i] && this.userAnswer.length >= i) {
+        incorrectAnswers += this.userAnswer[i] + ' ';
+      } else {
+        incorrectAnswers += '***' + ' ';
+      }
+    }
+
+    for (let i = 0; i < size; i++) {
+      incorrectAnswers += '***' + ' ';
+    }
+
+    return incorrectAnswers;
+  }
+
   setSpeed(speed: number) {
     this.currentSpeed = speed;
+    this.currentSpeedIndex = this.speeds.indexOf(speed);
     this.audioPlayer.nativeElement.playbackRate = speed;
   }
 
-  playSegment(start: number, end: number) {
+  getSliderPosition(): string {
+    const containerWidth = 150;
+    const buttonWidth = 50;
+    const gap = 10;
+
+    const centerPosition = (containerWidth - buttonWidth) / 2;
+
+    const buttonPosition = this.currentSpeedIndex * (buttonWidth + gap);
+
+    const offset = centerPosition - buttonPosition;
+
+    return `translateX(${offset}px)`;
+  }
+
+  playAudioSegment() {
+    if (!this.currentSentence) return;
     const audio = this.audioPlayer.nativeElement;
-    audio.currentTime = start;
-    audio.play();
+    if (!this.isPlaying) {
+      this.isPlaying = !this.isPlaying;
+      const startTime = this.progress = this.currentSentence.startTimeSeconds || 0;
 
-    const checkTime = () => {
-      if (audio.currentTime >= end) {
-        audio.pause();
-        audio.removeEventListener('timeupdate', checkTime);
-      }
-    };
+      audio.currentTime = startTime;
+      audio.play();
 
-    audio.addEventListener('timeupdate', checkTime);
+      this.fillProgress(audio);
+
+      const stopAtEnd = () => {
+        if (this.currentSentence && audio.currentTime >= this.currentSentence.endTimeSeconds) {
+          audio.pause();
+          audio.removeEventListener('timeupdate', stopAtEnd);
+          this.isPlaying = !this.isPlaying;
+        }
+      };
+
+      audio.addEventListener('timeupdate', stopAtEnd);
+    } else {
+      this.isPlaying = !this.isPlaying;
+      audio.pause();
+    }
+  }
+
+  fillProgress(audio: HTMLAudioElement) {
+    audio.addEventListener('timeupdate', () => {
+      this.currentTime = audio.currentTime;
+      this.progress = (this.currentTime / this.duration) * 100;
+    });
   }
 
   formatTime(seconds: number): string {
