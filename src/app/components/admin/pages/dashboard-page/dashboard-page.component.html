@@ -1,0 +1,223 @@
+<main class="main" id="main">
+  <div class="bg-transparent">
+    <p-breadcrumb class="w-100" [model]="items" [style]="{'background': 'transparent'}">
+      <ng-template #item let-item>
+        <ng-container *ngIf="item.route; else elseBlock">
+          <a [routerLink]="item.route" class="p-breadcrumb-item-link">
+            <i [ngClass]="[item.icon ? item.icon : '']"></i>
+            <span class="text-success font-semibold" style="font-size: 14px">{{ item.label }}</span>
+          </a>
+        </ng-container>
+        <ng-template #elseBlock>
+          <a [href]="item.url">
+            <span style="font-size: 14px; color: #6c757d">{{ item.label }}</span>
+          </a>
+        </ng-template>
+      </ng-template>
+    </p-breadcrumb>
+  </div>
+  <div class="card-section">
+    <div class="row">
+      <div class="col-4">
+        <div class="card-das">
+          <div class="data p-4">
+            <div class="icon fw-bold fs-6 mb-2">
+              <i class="pi pi-money-bill" ></i>
+              Doanh thu
+            </div>
+            <div class="d-flex align-items-center">
+              <span class="pb-1 pt-1 ps-2 pe-2 rounded-2 me-2" style="background: #fc6161">
+                <i class="pi pi-arrow-down"></i>
+                0.6%
+              </span>
+              <span class="fs-3 fw-bold" style="color: #0dcaf0">
+                4.200.500 VND
+              </span>
+            </div>
+          </div>
+          <div class="w-100 h-auto img">
+            <img class="w-100 h-100" src="https://verona.primeng.org/demo/images/dashboard/users.svg" alt="chart">
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="card-das">
+          <div class="data p-4">
+            <div class="icon fw-bold fs-6 mb-2">
+              <i class="pi pi-money-bill" ></i>
+              Đơn hàng
+            </div>
+            <div class="d-flex align-items-center">
+              <span class="pb-1 pt-1 ps-2 pe-2 rounded-2 me-2" style="background: #48fa99">
+                <i class="pi pi-arrow-up"></i>
+                0.6%
+              </span>
+              <span class="fs-3 fw-bold" style="color: #0bc26a">
+                120
+              </span>
+            </div>
+          </div>
+          <div class="w-100 h-auto img">
+            <img class="w-100 h-100" src="https://verona.primeng.org/demo/images/dashboard/rate.svg" alt="chart">
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="card-das">
+          <div class="data p-4">
+            <div class="icon fw-bold fs-6 mb-2">
+              <i class="pi pi-money-bill" ></i>
+              Doanh thu
+            </div>
+            <div class="d-flex align-items-center">
+              <span class="pb-1 pt-1 ps-2 pe-2 rounded-2 me-2" style="background: #fc6161">
+                <i class="pi pi-arrow-down"></i>
+                0.6%
+              </span>
+              <span class="fs-3" style="color: #69009b">
+                4.200.500 VND
+              </span>
+            </div>
+          </div>
+          <div class="w-100 h-auto img">
+            <img class="w-100 h-100" src="https://verona.primeng.org/demo/images/dashboard/interactions.svg" alt="chart">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-section">
+    <div class="row">
+      <div class="col-8">
+        <div class="chart-das">
+          <div class="title d-flex justify-content-between align-items-center mb-3">
+            <div class="fw-bold">Biểu đồ doanh thu</div>
+            <p-select [options]="revenueYears" [(ngModel)]="revenueYearSelected" [placeholder]="revenueYearSelected" [virtualScroll]="true" [virtualScrollItemSize]="38" class="w-full md:w-56" />
+          </div>
+          <div class="info mb-2">
+            <div class="row">
+              <div class="col-6">
+                <div class="fw-bold fs-3">6.700.000$</div>
+                <div class="fw-bold fs-6">Mức tăng trưởng</div>
+                <div style="font-size: 13px; color: #6c757d">Mức tăng trưởng doanh thu định kỳ hàng tháng so với tháng trước. <a href="#">đọc thêm</a></div>
+              </div>
+              <div class="col-6">
+                <div class="fw-bold fs-3">900.000$</div>
+                <div class="fw-bold fs-6">Doanh thu/ Khách hàng</div>
+                <div style="font-size: 13px; color: #6c757d">Doanh thu định kỳ trung bình mỗi khách hàng mang lại mỗi tháng. <a href="#">đọc thêm</a></div>
+              </div>
+            </div>
+          </div>
+          <div class="chart">
+            <div class="fw-bold">Doanh thu</div>
+            <div>
+              <p-chart type="bar" [data]="revenueData" [options]="revenueOptions" class="h-[30rem]" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="chart-das">
+          <div class="title d-flex justify-content-between align-items-center mb-4">
+            <div class="fw-bold">Lịch sử giao dịch</div>
+            <i class="pi pi-filter"></i>
+          </div>
+          <div>
+            <p-timeline [value]="eventHistoryTransactions" align="left" class="d-flex h-25">
+              <ng-template #marker let-event>
+                <span class="d-flex justify-content-center align-items-center rounded-circle w-100 p-2 text-white" [style]="{ 'background-color': event.color }">
+                    <i [class]="event.icon"></i>
+                </span>
+              </ng-template>
+              <ng-template #content let-event>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div style="font-size: 13px">
+                    <div class="fw-bold"> Shipping for {{event.customer}}</div>
+                    <div> {{event.date}}</div>
+                  </div>
+                  <div [style]="{ 'color': event.color }">
+                    {{event.price}}
+                  </div>
+                </div>
+              </ng-template>
+            </p-timeline>
+          </div>
+          <hr>
+          <div class="text-center fw-bold">
+            <a href="#">Xem tất cả giao dịch</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-section">
+    <div class="row">
+      <div class="col-4">
+        <div class="chart-das">
+          <div class="title d-flex justify-content-between align-items-center mb-2">
+            <div class="fw-bold">Phương thức thanh toán</div>
+          </div>
+          <div class="chart w-75 m-auto">
+            <p-chart type="doughnut" [data]="paymentData" [options]="paymentOptions" class="w-full md:w-[30rem]" />
+          </div>
+          <div class="info">
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="d-flex justify-content-between align-items-center">
+                <div style="width: 30px; height: 30px;" class="me-2 bg-success rounded-2"></div>
+                <div>Thanh toán COD</div>
+              </div>
+              <div>10%</div>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="d-flex justify-content-between align-items-center">
+                <div style="width: 30px; height: 30px;" class="me-2 bg-success rounded-2"></div>
+                <div>Thanh toán COD</div>
+              </div>
+              <div>5%</div>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="d-flex justify-content-between align-items-center">
+                <div style="width: 30px; height: 30px;" class="me-2 bg-success rounded-2"></div>
+                <div>Thanh toán COD</div>
+              </div>
+              <div>20%</div>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="d-flex justify-content-between align-items-center">
+                <div style="width: 30px; height: 30px;" class="me-2 bg-success rounded-2"></div>
+                <div>Thanh toán COD</div>
+              </div>
+              <div>50%</div>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="d-flex justify-content-between align-items-center">
+                <div style="width: 30px; height: 30px;" class="me-2 bg-success rounded-2"></div>
+                <div>Thanh toán COD</div>
+              </div>
+              <div>15%</div>
+            </div>
+            <hr>
+          </div>
+        </div>
+      </div>
+      <div class="col-8">
+        <div class="chart-das">
+          <div class="title d-flex justify-content-between align-items-center mb-3">
+            <div class="fw-bold">Biểu đồ doanh thu</div>
+            <p-select [options]="revenueYears" [(ngModel)]="revenueYearSelected" [placeholder]="revenueYearSelected" [virtualScroll]="true" [virtualScrollItemSize]="38" class="w-full md:w-56" />
+          </div>
+          <div class="chart">
+            <p-chart type="line" [data]="orderData" [options]="orderOptions" class="h-[30rem]" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>

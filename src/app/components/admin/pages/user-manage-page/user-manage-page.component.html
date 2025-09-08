@@ -1,0 +1,157 @@
+<div class="main" id="main">
+  <div class="bg-transparent">
+    <p-breadcrumb class="w-100" [model]="items" [style]="{'background': 'transparent'}">
+      <ng-template #item let-item>
+        <ng-container *ngIf="item.route; else elseBlock">
+          <a [routerLink]="item.route" class="p-breadcrumb-item-link">
+            <i [ngClass]="[item.icon ? item.icon : '']"></i>
+            <span class="text-success font-semibold" style="font-size: 14px">{{ item.label }}</span>
+          </a>
+        </ng-container>
+        <ng-template #elseBlock>
+          <a [href]="item.url">
+            <span style="font-size: 14px; color: #6c757d">{{ item.label }}</span>
+          </a>
+        </ng-template>
+      </ng-template>
+    </p-breadcrumb>
+  </div>
+  <div class="customer-section">
+    <p-toast />
+    <p-table
+      #dt
+      [value]="users"
+      [(selection)]="selectedUsers"
+      dataKey="id"
+      [rowHover]="true"
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [loading]="loading"
+      [paginator]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      [filterDelay]="0"
+      [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
+    >
+      <ng-template #caption>
+        <div class="d-flex justify-content-between">
+          <p-button [outlined]="true" icon="pi pi-filter-slash" label="Clear" [style]="{'font-size': '14px'}"/>
+          <p-iconField class="d-flex align-items-center">
+            <p-inputIcon class="pi pi-search"/>
+            <input class="search-box" pInputText type="text" (input)="onGlobalFilter($event)" placeholder="Keyboard Search" />
+          </p-iconField>
+        </div>
+      </ng-template>
+      <ng-template #header>
+        <tr>
+          <th style="width: 4rem">
+            <p-tableHeaderCheckbox />
+          </th>
+          <th pSortableColumn="name" style="min-width: 14rem">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                Họ tên
+                <p-sortIcon field="name" />
+              </div>
+              <p-columnFilter type="text" field="name" display="menu" class="ml-auto" />
+            </div>
+          </th>
+          <th pSortableColumn="country.name" style="min-width: 14rem">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                Quốc tịch
+                <p-sortIcon field="country.name" />
+              </div>
+              <p-columnFilter type="text" field="country.name" display="menu" class="ml-auto" />
+            </div>
+          </th>
+          <th pSortableColumn="representative.name" style="min-width: 14rem">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                Thông tin
+                <p-sortIcon field="representative.name" />
+              </div>
+              <p-columnFilter field="representative" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" class="ml-auto">
+                <ng-template #filter let-value let-filter="filterCallback">
+                  <p-multiselect [filter]="false" [options]="representatives" placeholder="Any" (onChange)="filter($event.value)" optionLabel="name" class="w-100">
+                    <ng-template let-option #item>
+                      <div class="d-flex align-items-center gap-2">
+                        <img [alt]="option.label" src="https://primefaces.org/cdn/primeng/images/demo/avatar/{{ option.image }}" style="width: 32px" />
+                        <span>{{ option.name }}</span>
+                      </div>
+                    </ng-template>
+                  </p-multiselect>
+                </ng-template>
+              </p-columnFilter>
+            </div>
+          </th>
+          <th pSortableColumn="date" style="min-width: 10rem">
+            <div class="d-flex justify-content-between align-items-center">
+             <div>
+               Ngày tạo
+               <p-sortIcon field="date" />
+             </div>
+              <p-columnFilter type="date" field="date" display="menu" class="ml-auto" />
+            </div>
+          </th>
+          <th pSortableColumn="status" style="min-width: 10rem">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                Trạng thái
+                <p-sortIcon field="status" />
+              </div>
+              <p-columnFilter field="status" matchMode="equals" display="menu" class="ml-auto">
+                <ng-template #filter let-value let-filter="filterCallback">
+                  <p-dropdown [options]="statuses" (onChange)="filter($event.value)" placeholder="Any">
+                    <ng-template let-option #item>
+                      <p-tag [value]="option.label" [severity]="getSeverity(option.label)" />
+                    </ng-template>
+                  </p-dropdown>
+                </ng-template>
+              </p-columnFilter>
+            </div>
+          </th>
+          <th style="width: 5rem"></th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-user>
+        <tr class="p-selectable-row">
+          <td>
+            <p-tableCheckbox [value]="user" />
+          </td>
+          <td>
+            {{ user.username }}
+          </td>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png" [class]="'fi fi-' + user.countryCode" style="width: 20px"  [alt]="user.countryCode"/>
+              <span class="ml-1 align-middle">{{ user.countryName }}</span>
+            </div>
+          </td>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <img [alt]="user.fullName" [src]="user.avatarUrl" width="32" style="vertical-align: middle" />
+              <span class="ml-1 align-middle">{{ user.fullName }}</span>
+            </div>
+          </td>
+          <td>
+            {{ user.createdAt | date: 'MM/dd/yyyy' }}
+          </td>
+          <td>
+            <p-tag [value]="user.status" [severity]="getSeverity(user.status)" />
+          </td>
+          <td style="text-align: center">
+            <p-button rounded icon="pi pi-cog" >
+              <i class="pi pi-cog"></i>
+            </p-button>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="8">No customers found.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

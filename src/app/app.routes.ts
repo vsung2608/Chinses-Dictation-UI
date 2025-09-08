@@ -7,6 +7,9 @@ import { DetailLessonPageComponent } from './components/user/pages/detail-lesson
 import { AuthLayoutComponent } from './layout/auth-layout/auth-layout.component';
 import { LoginPageComponent } from './components/auth/login-page/login-page.component';
 import { RegisterPageComponent } from './components/auth/register-page/register-page.component';
+import { DashboardPageComponent } from './components/admin/pages/dashboard-page/dashboard-page.component';
+import { LessonManagePageComponent } from './components/admin/pages/lesson-manage-page/lesson-manage-page.component';
+import { UserManagePageComponent } from './components/admin/pages/user-manage-page/user-manage-page.component';
 
 export const routes: Routes = [
   {
@@ -23,6 +26,9 @@ export const routes: Routes = [
     path: 'admin',
     component: AdminLayoutComponent,
     children: [
+      { path: '', component: DashboardPageComponent },
+      { path: 'lessons', component: LessonManagePageComponent },
+      { path: 'users', component: UserManagePageComponent }
     ]
   },
 
