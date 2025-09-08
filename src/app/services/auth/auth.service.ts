@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { StorageMap } from '@ngx-pwa/local-storage';
 import { LoginRequest, RefreshTokenRequest, RegisterRequest, TokenResponse } from '../../models/Auth';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable, switchMap, tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
+import { StorageService } from '../storage/storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +14,9 @@ export class AuthService {
   private static readonly REGISTER_URL: string = 'http://localhost:8080/api/v1/auth/register';
   private static readonly REFRESH_URL: string = 'http://localhost:8080/api/v1/auth/refresh';
   private static readonly LOGOUT_URL: string = 'http://localhost:8080/api/v1/auth/logout';
+  private static readonly ACTIVATE_URL: string = 'http://localhost:8080/api/v1/auth/activate';
 
-  constructor(private httpClient: HttpClient, private storageMap: StorageMap) {
+  constructor(private httpClient: HttpClient, private storage: StorageService) {
   }
 
   login(username: string, password: string) {
@@ -28,45 +29,41 @@ export class AuthService {
   }
 
   register(data: RegisterRequest) {
-    this.httpClient.post(AuthService.REGISTER_URL, data);
+    return this.httpClient.post(AuthService.REGISTER_URL, data);
+  }
+
+  activation(code: string) {
+    return this.httpClient.post(`${AuthService.ACTIVATE_URL}?code=${code}`, {});
   }
 
   logout() {
     this.httpClient.post(AuthService.LOGOUT_URL, {})
 
-    this.storageMap.delete('access_token')
-    this.storageMap.delete('expires_at')
+    this.storage.removeItem('access_token');
+    this.storage.removeItem('expires_at');
   }
 
   refresh(): Observable<TokenResponse> {
-    return this.getAccessToken().pipe(
-      switchMap(token => {
-        const refreshToken: RefreshTokenRequest = { token: token || '' };
-        return this.httpClient.post<TokenResponse>(AuthService.REFRESH_URL, refreshToken).pipe(
-          tap(res => this.saveTokens(res))
-        )
-      })
-    );
+    const refreshTokenRequest: RefreshTokenRequest = { token: this.getAccessToken() || '' };
+    return this.httpClient.post<TokenResponse>(AuthService.REFRESH_URL, refreshTokenRequest)
+      .pipe(
+        tap((res) => this.saveTokens(res))
+      );
   }
 
   saveTokens(data: TokenResponse) {
-    this.storageMap.set('access_token', data.token).subscribe(() => {
-      console.log('Token saved');
-    });
+    const expiresDate = Date.now() + data.expiresIn * 1000;
 
-    this.storageMap.set('expires_at', data.expiresIn.toString()).subscribe(() => {
-      console.log('Token saved');
-    });
+    this.storage.setItem('access_token', data.token);
+    this.storage.setItem('expires_at', expiresDate.toString());
   }
 
-  getAccessToken(): Observable<string | null> {
-    return this.storageMap.get('access_token').pipe(
-      map(value => (typeof value === 'string' ? value : null))
-    );
+  getAccessToken() {
+    return this.storage.getItem('access_token');
   }
 
   getTokenExpiration(): number {
-    return Number(this.storageMap.get('expires_at')) || 0
+    return Number(this.storage.getItem('expires_at')) || 0;
   }
 
   isTokenExpired(): boolean {
@@ -76,7 +73,9 @@ export class AuthService {
   willTokenExpireSoon(bufferSeconds = 60): boolean {
     const token = this.getAccessToken();
     if (!token) return true;
-    const now = Date.now() / 1000;
-    return this.getTokenExpiration() - now < bufferSeconds;
+    const now = Date.now();
+    const expiration = this.getTokenExpiration(); // ms
+    const buffer = bufferSeconds * 1000; // convert to ms
+    return expiration - now < buffer;
   }
 }

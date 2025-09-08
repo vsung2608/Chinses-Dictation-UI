@@ -15,5 +15,5 @@ export interface TokenResponse{
 export interface RegisterRequest{
   username: string;
   password: string;
-  fullname: string;
+  fullName: string;
 }
