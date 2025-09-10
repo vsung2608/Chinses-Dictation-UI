@@ -1,0 +1,51 @@
+.main{
+    padding: 100px 0;
+
+    .category{
+        box-shadow: 0 10px 25px rgb(34 34 34 / .18);
+    }
+
+
+    .category-img{
+        width: 100%;
+        aspect-ratio: 3/2;
+    }
+
+    .category-img img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .category-info{
+        padding: 20px;
+    }
+
+    .category-info .category-tag{
+        background: var(--main-color);
+        padding: 5px 10px;
+        color: white;
+        border-radius: 5px;
+    }
+
+    .category-info .category-name{
+        font-size: 30px;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    .category-profi div:first-child{
+        font-size: 25px;
+        font-weight: bold;
+    }
+
+    .category-profi div:last-child{
+        color: #9e9e9e;
+    }
+
+    .category-info .btn{
+        color: white;
+        background: var(--main-color);
+        width: 100%;
+    }
+}

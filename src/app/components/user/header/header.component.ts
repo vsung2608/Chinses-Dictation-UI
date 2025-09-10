@@ -1,4 +1,4 @@
-import {Component, NgModule} from '@angular/core';
+import {Component, NgModule, OnInit} from '@angular/core';
 import {Router, RouterLink, RouterLinkActive} from '@angular/router';
 import {SplitButtonModule} from 'primeng/splitbutton';
 import {MenuItem, PrimeIcons} from 'primeng/api';
@@ -8,6 +8,8 @@ import {AccordionModule} from 'primeng/accordion';
 import {Avatar} from 'primeng/avatar';
 import {Badge} from 'primeng/badge';
 import {DrawerModule} from 'primeng/drawer';
+import { StorageService } from '../../../services/storage/storage.service';
+import { AuthService } from '../../../services/auth/auth.service';
 
 
 @Component({
@@ -26,14 +28,14 @@ import {DrawerModule} from 'primeng/drawer';
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.css']
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit{
   items: MenuItem[];
   name: string = 'Nguyen Van Sung';
   avartar: string = "ajhsdasdasda";
   logined: boolean = true;
   visible: boolean = false;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private authService: AuthService) {
     this.items = [
       {
         label: 'Light Mode',
@@ -70,6 +72,11 @@ export class HeaderComponent {
         }
       }
     ]
+  }
+  ngOnInit(): void {
+    if(this.authService.isTokenExpired()){
+      this.logined = false
+    }
   }
 
   navigateToSignInPage(){

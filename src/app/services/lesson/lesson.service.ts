@@ -24,4 +24,8 @@ export class LessonService {
     }
     return this.httpClient.get<DataPaged<Lesson>>(`${LessonService.LESSON_PAGED_URL}`, { params: this.params });
   }
+
+  createLesson(form: FormData){
+    return this.httpClient.post(LessonService.LESSON_PAGED_URL, form)
+  }
 }

@@ -9,6 +9,7 @@
 
 /* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
 :root {
+  --main-color: #00a88e;
   --background-line-chart-color: #fc6161;
   --background-chart-color: #00a88e;
   --background-color: #ffffff; /* Background color for the entire website, including individual sections */

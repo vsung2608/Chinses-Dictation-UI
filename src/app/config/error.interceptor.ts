@@ -14,7 +14,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       }else{
         message = `${error.status} + ${error.message}`
       }
-      messageService.add({ severity: 'danger', summary: 'Hệ thống', detail: message, life: 3000 })
+      messageService.add({ severity: 'warn', summary: 'Hệ thống', detail: "Có lỗi trong quá trình xử lý", life: 3000 })
       return throwError(() => new Error("Có lỗi xảy ra trong quá trình xử lý. Vui lòng thử lại sau"))
     })
   )

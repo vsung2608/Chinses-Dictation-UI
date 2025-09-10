@@ -124,18 +124,17 @@
                     </td>
                     <td>
                         <p-button class="me-2" icon="pi pi-pencil" [rounded]="true" [outlined]="true"
-                            (click)="editLesson(lesson)">
+                            (click)="editLesson(lesson.id)">
                             <i class="pi pi-pencil"></i>
                         </p-button>
-                        <p-button class="me-2" severity="info" icon="pi pi-eye" [rounded]="true" [outlined]="true"
-                            >
+                        <p-button class="me-2" severity="info" icon="pi pi-eye" [rounded]="true" [outlined]="true">
                             <i class="pi pi-eye"></i>
                         </p-button>
                         <p-button severity="danger" icon="pi pi-trash" [rounded]="true" [outlined]="true"
                             (click)="deleteLesson(lesson)">
                             <i class="pi pi-trash"></i>
                         </p-button>
-                        
+
                     </td>
                 </tr>
             </ng-template>
@@ -147,3 +146,86 @@
         </div>
     </div>
 </div>
+
+<p-dialog header="Thông tin bái học" [modal]="true" [(visible)]="visibleLessonDialog" [style]="{ width: '70rem' }"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" class="lesson-dialog">
+    <div class="row">
+        <div class="col-4 mb-3 mt-3 d-flex">
+            <audio *ngIf="lesson" [src]="lesson.audioFilePath" ></audio>
+            <button class="play-button me-2">
+                <i class="fas" [ngClass]="isPlaying ? 'fa-pause' : 'fa-play'"></i>
+            </button>
+            <p-fileupload #fu mode="basic" chooseLabel="Choose" chooseIcon="pi pi-upload" name="demo[]"
+                url="https://www.primefaces.org/cdn/api/upload.php" accept="audio/*" maxFileSize="10000000"
+                (onUpload)="onUpload($event)"/>
+        </div>
+        <div class="col-4 mb-3 mt-3">
+            <p-floatlabel variant="on">
+                <input pInputText id="on_label" [(ngModel)]="value2" autocomplete="off" />
+                <label for="on_label">Tiêu đề (Tiếng Hán)</label>
+            </p-floatlabel>
+        </div>
+        <div class="col-4 mb-3 mt-3">
+            <p-floatlabel variant="on">
+                <input pInputText id="on_label" [(ngModel)]="value2" autocomplete="off" />
+                <label for="on_label">Tiêu đề (Tiếng Hán)</label>
+            </p-floatlabel>
+        </div>
+        <div class="col-4">
+            <p-floatlabel variant="on">
+                <input pInputText id="on_label" [(ngModel)]="value2" autocomplete="off" />
+                <label for="on_label">Tiêu đề (Tiếng Hán)</label>
+            </p-floatlabel>
+        </div>
+        <div class="col-4">
+            <p-floatlabel variant="on">
+                <input pInputText id="on_label" [(ngModel)]="value2" autocomplete="off" />
+                <label for="on_label">Tiêu đề (Tiếng Việt)</label>
+            </p-floatlabel>
+        </div>
+        <div class="col-4">
+            <p-floatlabel class="w-full md:w-56" variant="on">
+                <p-select [options]="levels" [(ngModel)]="selectedLevel" [checkmark]="true" [showClear]="true"
+                    class="w-100 p-1" />
+                <label for="on_label">Tiêu đề (Tiếng Việt)</label>
+            </p-floatlabel>
+        </div>
+    </div>
+    <hr>
+    <table class="w-100">
+        <thead>
+            <tr>
+                <th style="width: 5%;">ID</th>
+                <th style="width: 20%;">Tiếng trung</th>
+                <th style="width: 20%;">Pinyin</th>
+                <th style="width: 35%;">Tiếng việt</th>
+                <th style="width: 10%;">Bắt đầu</th>
+                <th style="width: 10%;">Kết thúc</th>
+            </tr>
+        </thead>
+        <tbody *ngIf="lesson">
+            @for (sentence of lesson.sentences; track sentence.id) {
+            <tr class="mt-3">
+                <td>
+                    {{ sentence.id }}
+                </td>
+                <td>
+                    <input type="text" [value]="sentence.chineseText" autocomplete="off" />
+                </td>
+                <td>
+                    <input type="text" [value]="sentence.pinyinText" autocomplete="off" />
+                </td>
+                <td>
+                    <input type="text" [value]="sentence.vietnameseTranslation" autocomplete="off" />
+                </td>
+                <td>
+                    <input type="number" [value]="sentence.startTimeSeconds" autocomplete="off" />
+                </td>
+                <td>
+                    <input type="number" [value]="sentence.endTimeSeconds" autocomplete="off" />
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</p-dialog>

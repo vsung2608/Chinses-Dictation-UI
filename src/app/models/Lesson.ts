@@ -2,6 +2,7 @@ export interface Lesson {
   id: number;
   titleChinese: string;
   titleVietnamese: string;
+  categoryId: number;
   description: string;
   audioFilePath: string;
   level: string;
@@ -21,6 +22,10 @@ export interface Section {
   blueStars: number;
   isExpanded: boolean;
   lessons: Lesson[];
+}
+export interface Category{
+  id: number;
+  name: string;
 }
 
 export interface Sentence {

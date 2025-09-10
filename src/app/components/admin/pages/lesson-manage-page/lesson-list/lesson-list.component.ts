@@ -1,25 +1,27 @@
-import {ChangeDetectorRef, Component, ViewChild} from '@angular/core';
-import {Table, TableModule} from 'primeng/table';
-import {ConfirmationService, MenuItem, MessageService} from 'primeng/api';
-import {ConfirmDialogModule} from 'primeng/confirmdialog';
-import {ButtonModule} from 'primeng/button';
-import {FormsModule} from '@angular/forms';
-import {SelectModule} from 'primeng/select';
-import {DialogModule} from 'primeng/dialog';
-import {ToolbarModule} from 'primeng/toolbar';
-import {ToastModule} from 'primeng/toast';
-import {RadioButtonModule} from 'primeng/radiobutton';
-import {TagModule} from 'primeng/tag';
-import {RatingModule} from 'primeng/rating';
-import {InputIconModule} from 'primeng/inputicon';
-import {CommonModule} from '@angular/common';
-import {IconFieldModule} from 'primeng/iconfield';
-import {FileUploadModule} from 'primeng/fileupload';
-import {BreadcrumbModule} from 'primeng/breadcrumb';
-import {Router, RouterLink} from '@angular/router';
-import {PaginatorModule, PaginatorState} from 'primeng/paginator';
-import { Lesson } from '../../../../models/Lesson';
-import { LessonService } from '../../../../services/lesson/lesson.service';
+import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import { Table, TableModule } from 'primeng/table';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ButtonModule } from 'primeng/button';
+import { FormsModule } from '@angular/forms';
+import { SelectModule } from 'primeng/select';
+import { DialogModule } from 'primeng/dialog';
+import { ToolbarModule } from 'primeng/toolbar';
+import { ToastModule } from 'primeng/toast';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { TagModule } from 'primeng/tag';
+import { RatingModule } from 'primeng/rating';
+import { InputIconModule } from 'primeng/inputicon';
+import { CommonModule } from '@angular/common';
+import { IconFieldModule } from 'primeng/iconfield';
+import { FileUploadModule, UploadEvent } from 'primeng/fileupload';
+import { BreadcrumbModule } from 'primeng/breadcrumb';
+import { Router, RouterLink } from '@angular/router';
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { InputTextModule } from 'primeng/inputtext';
+import { Lesson } from '../../../../../models/Lesson';
+import { LessonService } from '../../../../../services/lesson/lesson.service';
 
 interface Column {
   field: string;
@@ -33,17 +35,15 @@ interface ExportColumn {
 }
 
 @Component({
-  selector: 'app-lesson-manage-page',
+  selector: 'app-lesson-list',
   imports: [ConfirmDialogModule, ButtonModule, FormsModule, SelectModule, DialogModule,
-            TableModule, ToolbarModule, ToastModule, RadioButtonModule, TagModule,
-            RatingModule, InputIconModule, IconFieldModule, FileUploadModule,
-            CommonModule, BreadcrumbModule, RouterLink, PaginatorModule],
-  templateUrl: './lesson-manage-page.component.html',
-  styleUrl: './lesson-manage-page.component.css'
+    TableModule, ToolbarModule, ToastModule, RadioButtonModule, TagModule, FloatLabelModule,
+    RatingModule, InputIconModule, IconFieldModule, FileUploadModule, InputTextModule,
+    CommonModule, BreadcrumbModule, RouterLink, PaginatorModule],
+  templateUrl: './lesson-list.component.html',
+  styleUrl: './lesson-list.component.css'
 })
-export class LessonManagePageComponent {
-  productDialog: boolean = false;
-
+export class LessonListComponent {
   items?: MenuItem[];
 
   lessons!: Lesson[];
@@ -69,6 +69,14 @@ export class LessonManagePageComponent {
   isPlaying: boolean = false;
 
   exportColumns!: ExportColumn[];
+
+  visibleLessonDialog = false;
+
+  levels: string[] = ['HSK1', 'HSK2', 'HSK3', 'HSK4', 'HSK5', 'HSK6', 'HSK7', 'HSK8', 'HSK9']
+
+  selectedLevel: string = ''
+
+  value2 = ''
 
   constructor(
     private lessonService: LessonService,
@@ -121,9 +129,10 @@ export class LessonManagePageComponent {
     this.route.navigateByUrl("/admin/products/add")
   }
 
-  editLesson(lesson: Lesson) {
-    this.lesson = { ...lesson };
-    this.productDialog = true;
+  editLesson(id: number) {
+    this.lessonService.getDetailLessonById(id)
+      .subscribe(les => this.lesson = les);
+    this.visibleLessonDialog = true;
   }
 
   deleteSelectedLessons() {
@@ -145,7 +154,7 @@ export class LessonManagePageComponent {
   }
 
   hideDialog() {
-    this.productDialog = false;
+    this.visibleLessonDialog = false;
     this.submitted = false;
   }
 
@@ -208,7 +217,7 @@ export class LessonManagePageComponent {
       }
 
       this.lessons = [...this.lessons];
-      this.productDialog = false;
+      this.visibleLessonDialog = false;
       this.lesson = {} as Lesson;
     }
   }
@@ -216,5 +225,9 @@ export class LessonManagePageComponent {
   onGlobalFilter(event: any) {
     const value = (event.target as HTMLInputElement).value;
     this.dt?.filterGlobal(value, 'contains');
+  }
+
+  onUpload(event: UploadEvent) {
+    this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded with Basic Mode' });
   }
 }

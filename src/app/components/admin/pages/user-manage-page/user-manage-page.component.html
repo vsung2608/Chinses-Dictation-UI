@@ -18,27 +18,17 @@
   </div>
   <div class="customer-section">
     <p-toast />
-    <p-table
-      #dt
-      [value]="users"
-      [(selection)]="selectedUsers"
-      dataKey="id"
-      [rowHover]="true"
-      [rows]="10"
-      [showCurrentPageReport]="true"
-      [rowsPerPageOptions]="[10, 25, 50]"
-      [loading]="loading"
-      [paginator]="true"
-      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-      [filterDelay]="0"
-      [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
-    >
+    <p-table #dt [value]="users" [(selection)]="selectedUsers" dataKey="id" [rowHover]="true" [rows]="10"
+      [showCurrentPageReport]="true" [rowsPerPageOptions]="[10, 25, 50]" [loading]="loading" [paginator]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [filterDelay]="0"
+      [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']">
       <ng-template #caption>
         <div class="d-flex justify-content-between">
-          <p-button [outlined]="true" icon="pi pi-filter-slash" label="Clear" [style]="{'font-size': '14px'}"/>
+          <p-button [outlined]="true" icon="pi pi-filter-slash" label="Clear" [style]="{'font-size': '14px'}" />
           <p-iconField class="d-flex align-items-center">
-            <p-inputIcon class="pi pi-search"/>
-            <input class="search-box" pInputText type="text" (input)="onGlobalFilter($event)" placeholder="Keyboard Search" />
+            <p-inputIcon class="pi pi-search" />
+            <input class="search-box" pInputText type="text" (input)="onGlobalFilter($event)"
+              placeholder="Keyboard Search" />
           </p-iconField>
         </div>
       </ng-template>
@@ -71,12 +61,16 @@
                 Thông tin
                 <p-sortIcon field="representative.name" />
               </div>
-              <p-columnFilter field="representative" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" class="ml-auto">
+              <p-columnFilter field="representative" matchMode="in" display="menu" [showMatchModes]="false"
+                [showOperator]="false" [showAddButton]="false" class="ml-auto">
                 <ng-template #filter let-value let-filter="filterCallback">
-                  <p-multiselect [filter]="false" [options]="representatives" placeholder="Any" (onChange)="filter($event.value)" optionLabel="name" class="w-100">
+                  <p-multiselect [filter]="false" [options]="representatives" placeholder="Any"
+                    (onChange)="filter($event.value)" optionLabel="name" class="w-100">
                     <ng-template let-option #item>
                       <div class="d-flex align-items-center gap-2">
-                        <img [alt]="option.label" src="https://primefaces.org/cdn/primeng/images/demo/avatar/{{ option.image }}" style="width: 32px" />
+                        <img [alt]="option.label"
+                          src="https://primefaces.org/cdn/primeng/images/demo/avatar/{{ option.image }}"
+                          style="width: 32px" />
                         <span>{{ option.name }}</span>
                       </div>
                     </ng-template>
@@ -87,10 +81,10 @@
           </th>
           <th pSortableColumn="date" style="min-width: 10rem">
             <div class="d-flex justify-content-between align-items-center">
-             <div>
-               Ngày tạo
-               <p-sortIcon field="date" />
-             </div>
+              <div>
+                Ngày tạo
+                <p-sortIcon field="date" />
+              </div>
               <p-columnFilter type="date" field="date" display="menu" class="ml-auto" />
             </div>
           </th>
@@ -124,7 +118,8 @@
           </td>
           <td>
             <div class="d-flex align-items-center gap-2">
-              <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png" [class]="'fi fi-' + user.countryCode" style="width: 20px"  [alt]="user.countryCode"/>
+              <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
+                [class]="'fi fi-' + user.countryCode" style="width: 20px" [alt]="user.countryCode" />
               <span class="ml-1 align-middle">{{ user.countryName }}</span>
             </div>
           </td>
@@ -141,7 +136,7 @@
             <p-tag [value]="user.status" [severity]="getSeverity(user.status)" />
           </td>
           <td style="text-align: center">
-            <p-button rounded icon="pi pi-cog" >
+            <p-button rounded icon="pi pi-cog">
               <i class="pi pi-cog"></i>
             </p-button>
           </td>
