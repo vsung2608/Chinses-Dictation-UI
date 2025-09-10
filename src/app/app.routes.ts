@@ -19,7 +19,7 @@ export const routes: Routes = [
     component: UserLayoutComponent,
     children: [
       { path: '', component: HomePageComponent },
-      { path: 'lessons', component: LessonPageComponent },
+      { path: 'categories/:id', component: LessonPageComponent },
       { path: 'lessons/:id', component: DetailLessonPageComponent },
       { path: 'categories', component: CategoryPageComponent }
     ]

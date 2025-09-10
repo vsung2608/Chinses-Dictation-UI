@@ -9,7 +9,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 })
 export class CommentService {
 
-  private static readonly COMMENT_URL = 'http://localhost:8080/api/v1/user/comments/by-lesson'
+  private static readonly COMMENT_URL = 'http://localhost:8080/api/v1/user/comments'
   private data: DataPaged<CommentResponse> | undefined;
 
   private commentsSubject = new BehaviorSubject<CommentResponse[]>([]);
@@ -22,9 +22,9 @@ export class CommentService {
 
   constructor(private httpClient: HttpClient) { }
 
-  postComment(productId: number, content: string, parentCommentId: string) {
+  postComment(lessonId: number, content: string, parentCommentId: number) {
     let comment: CommentRequest = {
-      productId: productId, userId: '1', userName: 'Nguyen Van Sung', userAvatarUrl: 'https://untitledui.com/images/avatars/transparent/byron-robertson', content: content, parentCommentId: parentCommentId
+      lessonId: lessonId, content: content, parentCommentId: parentCommentId
     }
     this.httpClient.post<CommentResponse>(CommentService.COMMENT_URL, comment)
       .subscribe(comment => {
@@ -51,7 +51,7 @@ export class CommentService {
     if(page != null && size != null && lessonId != null){
       this.params = this.params.set('page', page).set('size', size).set('lessonId', lessonId);
     }
-    this.httpClient.get<DataPaged<CommentResponse>>(CommentService.COMMENT_URL, { params: this.params })
+    this.httpClient.get<DataPaged<CommentResponse>>(`${CommentService.COMMENT_URL}/by-lesson`, { params: this.params })
       .subscribe(dataResponse => {
         this.data = dataResponse;
         this.commentsSubject.next(dataResponse.data);

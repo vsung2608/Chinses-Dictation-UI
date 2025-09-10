@@ -325,6 +325,6 @@ border: 1px solid #00a88e;
   width: 40rem !important;
 }
 
-::ng-deep .p-button{
+::ng-deep .header-links .p-button{
   background-color: #00a88e !important;
 }

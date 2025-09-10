@@ -23,7 +23,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="audio-section col-6">
+                    <div class="audio-section col-12 col-xl-6">
                         <div class="audio-player">
                             <audio #audioPlayer [src]="lesson?.audioFilePath"></audio>
 
@@ -59,6 +59,68 @@
                                     <span>{{ formatTime(duration) }}</span>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="error-notification text-center fw-bold" *ngIf="isIncorrect && currentSentence">
+                            <span class="celebration-icon">Không chính xác: </span>
+                            <span class="error-text" [innerHTML]="higlightIncorrectAnswer()"></span>
+                        </div>
+
+                        <div class="success-notification text-center fw-bold" *ngIf="isCorrect && currentSentence">
+                            <span class="celebration-icon">🎉</span>
+                            <span class="success-text">Bạn đã viết đúng!</span>
+                            <span class="celebration-icon">🎉</span>
+                        </div>
+
+                        <div class="answer-display mt-3" *ngIf="isCorrect && currentSentence">
+                            <div class="chinese-text">
+                                <span class="label">Hán tự: </span>
+                                <span class="content" *ngIf="currentSentence">{{currentSentence.chineseText}}</span>
+                            </div>
+                            <div class="pinyin-text">
+                                <span class="label">Pinyin: </span>
+                                <span class="content" *ngIf="currentSentence">{{currentSentence.pinyinText}}</span>
+                            </div>
+                            <div class="vietnamese-text">
+                                <span class="label">Nghĩa: </span>
+                                <span class="content"
+                                    *ngIf="currentSentence">{{currentSentence.vietnameseTranslation}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dictation Section -->
+                    <div class="dictation-section col-12 col-xl-6">
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-content-center">
+                                <label for="dictationInput" class="form-label fw-semibold">
+                                    <i class="fas fa-pen me-2"></i>
+                                    Viết những gì bạn nghe được (Câu số {{currentSentenceIndex + 1}}/
+                                    {{lesson?.totalSentences}})
+                                </label>
+                                <div class="btn-report fw-bold" (click)="visibleReportDialog = true">
+                                    Báo cáo <i class="fa-solid fa-flag"></i>
+                                </div>
+                            </div>
+
+                            <textarea class="dictation-input" id="dictationInput" [(ngModel)]="userAnswer"
+                                placeholder="Bắt đầu nhập văn bản tại đây..." (focus)="focusInput()"></textarea>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn btn-custom btn-primary-custom" (click)="checkAnswer()"
+                                [disabled]="!userAnswer.trim()">
+                                <i class="fas fa-check me-2"></i>
+                                Kiểm tra
+                            </button>
+                            <button class="btn btn-next ms-2" (click)="nextExercise()" *ngIf="showResult">
+                                <i class="fas fa-arrow-right me-2"></i>
+                                Câu tiếp theo
+                            </button>
+                            <button class="btn btn-skip btn-custom ms-2" (click)="skipExercise()" *ngIf="!showResult">
+                                <i class="fas fa-arrow-right me-2"></i>
+                                Bỏ qua
+                            </button>
                         </div>
 
                         <div class="card">
@@ -195,68 +257,6 @@
                             </p-tabs>
                         </div>
                     </div>
-
-                    <!-- Dictation Section -->
-                    <div class="dictation-section col-6">
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between align-content-center">
-                                <label for="dictationInput" class="form-label fw-semibold">
-                                    <i class="fas fa-pen me-2"></i>
-                                    Viết những gì bạn nghe được (Câu số {{currentSentenceIndex + 1}}/
-                                    {{lesson?.totalSentences}})
-                                </label>
-                                <div class="btn-report fw-bold" (click)="visibleReportDialog = true">
-                                    Báo cáo <i class="fa-solid fa-flag"></i>
-                                </div>
-                            </div>
-
-                            <textarea class="dictation-input" id="dictationInput" [(ngModel)]="userAnswer"
-                                placeholder="Bắt đầu nhập văn bản tại đây..." (focus)="focusInput()"></textarea>
-                        </div>
-
-                        <div class="error-notification text-center fw-bold" *ngIf="isIncorrect && currentSentence">
-                            <span class="celebration-icon">Không chính xác: </span>
-                            <span class="error-text" [innerHTML]="higlightIncorrectAnswer()"></span>
-                        </div>
-
-                        <div class="success-notification text-center fw-bold" *ngIf="isCorrect && currentSentence">
-                            <span class="celebration-icon">🎉</span>
-                            <span class="success-text">Bạn đã viết đúng!</span>
-                            <span class="celebration-icon">🎉</span>
-                        </div>
-
-                        <div class="answer-display mt-3" *ngIf="isCorrect && currentSentence">
-                            <div class="chinese-text">
-                                <span class="label">Hán tự: </span>
-                                <span class="content" *ngIf="currentSentence">{{currentSentence.chineseText}}</span>
-                            </div>
-                            <div class="pinyin-text">
-                                <span class="label">Pinyin: </span>
-                                <span class="content" *ngIf="currentSentence">{{currentSentence.pinyinText}}</span>
-                            </div>
-                            <div class="vietnamese-text">
-                                <span class="label">Nghĩa: </span>
-                                <span class="content"
-                                    *ngIf="currentSentence">{{currentSentence.vietnameseTranslation}}</span>
-                            </div>
-                        </div>
-
-                        <div class="action-buttons">
-                            <button class="btn btn-custom btn-primary-custom" (click)="checkAnswer()"
-                                [disabled]="!userAnswer.trim()">
-                                <i class="fas fa-check me-2"></i>
-                                Kiểm tra đáp án
-                            </button>
-                            <button class="btn btn-next ms-2" (click)="nextExercise()" *ngIf="showResult">
-                                <i class="fas fa-arrow-right me-2"></i>
-                                Câu tiếp theo
-                            </button>
-                            <button class="btn btn-skip btn-custom ms-2" (click)="skipExercise()" *ngIf="!showResult">
-                                <i class="fas fa-arrow-right me-2"></i>
-                                Bỏ qua câu này
-                            </button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -282,7 +282,7 @@
     </p-floatlabel>
 
     <ng-template #footer>
-        <p-button label="Cancel" [text]="true" severity="secondary" (click)="visibleReportDialog = false" />
-        <p-button label="Save" [outlined]="true" severity="secondary" (click)="visibleReportDialog = false" />
+        <p-button label="Hủy" [text]="true" severity="secondary" (click)="visibleReportDialog = false" />
+        <p-button label="Gửi" [outlined]="true" severity="secondary" (click)="visibleReportDialog = false" />
     </ng-template>
 </p-dialog>

@@ -51,17 +51,14 @@
         <div class="collapse section-content" [class.show]="section.isExpanded"
             [style.height]="section.isExpanded ? 'auto' : '0'">
             <div class="row g-3">
-                <div *ngFor="let lesson of section.lessons" class="col-lg-4 col-md-6">
-                    <div class="lesson-card" (click)="onLessonClick(lesson)">
+                <div *ngFor="let lesson of section.lessons; let i = index" class="col-lg-4 col-md-6">
+                    <div class="lesson-card" (click)="onLessonClick(lesson)" [ngStyle]="{ 'border-bottom-color': getBorderColor(lesson.status)}">
                         <div class="d-flex align-items-center gap-3 mb-2">
-                            <!-- <i class="lesson-star fas fa-star" [class.green]="lesson.starColor === 'green'"
-                                [class.blue]="lesson === 'blue'"></i> -->
-                            <span class="lesson-number">number.</span>
-                            <span class="lesson-title">title</span>
-                            <i *ngIf="lesson" class="diamond-icon fas fa-gem ms-auto"></i>
+                            <span class="lesson-number">{{i + 1}}.</span>
+                            <span class="lesson-title">{{lesson.titleChinese}}/{{lesson.titleVietnamese}}</span>
                         </div>
                         <div class="lesson-meta">
-                            part parts • Vocab level: cocab
+                            {{lesson.totalSentences}} câu • Thời gian: {{lesson.estimatedDurationSeconds}}s
                         </div>
                     </div>
                 </div>

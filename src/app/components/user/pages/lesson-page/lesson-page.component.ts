@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { Lesson, Section } from '../../../../models/Lesson';
+import { Component, OnInit } from '@angular/core';
+import { Lesson, LessonWithProgressResponse, Section } from '../../../../models/Lesson';
+import { ActivatedRoute, Router } from '@angular/router';
+import { LessonService } from '../../../../services/lesson/lesson.service';
 
 @Component({
     selector: 'app-lesson-page',
@@ -8,7 +10,7 @@ import { Lesson, Section } from '../../../../models/Lesson';
     templateUrl: './lesson-page.component.html',
     styleUrl: './lesson-page.component.css'
 })
-export class LessonPageComponent {
+export class LessonPageComponent implements OnInit {
     sections: Section[] = [
         {
             id: 'section1',
@@ -54,11 +56,16 @@ export class LessonPageComponent {
             isExpanded: false,
             lessons: []
         }
-        // Có thể thêm nhiều sections khác...
     ];
 
+    id: number = 0;
+
+    constructor(private route: ActivatedRoute, private lessonService: LessonService, private router: Router) { }
+
     ngOnInit(): void {
-        // Khởi tạo component
+        this.route.params.subscribe(params => {
+            this.id = params['id'];
+        });
     }
 
     toggleSection(sectionId: string): void {
@@ -66,28 +73,11 @@ export class LessonPageComponent {
         if (section) {
             section.isExpanded = !section.isExpanded;
 
-            // Emit events nếu cần thiết
             if (section.isExpanded) {
                 this.onSectionExpand(section);
             } else {
                 this.onSectionCollapse(section);
             }
-        }
-    }
-
-    expandSection(sectionId: string): void {
-        const section = this.sections.find(s => s.id === sectionId);
-        if (section) {
-            section.isExpanded = true;
-            this.onSectionExpand(section);
-        }
-    }
-
-    collapseSection(sectionId: string): void {
-        const section = this.sections.find(s => s.id === sectionId);
-        if (section) {
-            section.isExpanded = false;
-            this.onSectionCollapse(section);
         }
     }
 
@@ -104,9 +94,12 @@ export class LessonPageComponent {
     }
 
     onSectionExpand(section: Section): void {
-        console.log('Section expanded:', section.title);
-        // Thực hiện logic khi section được mở rộng
-        // Ví dụ: track analytics, load thêm data, etc.
+        if (section.lessons.length === 0) {
+            this.lessonService.getLessonByLevelAndCategory(this.id, section.title).subscribe(data => {
+                section.lessons = data
+                section.isExpanded = true;
+            })
+        }
     }
 
     onSectionCollapse(section: Section): void {
@@ -114,23 +107,16 @@ export class LessonPageComponent {
         // Thực hiện logic khi section được thu gọn
     }
 
-    onLessonClick(lesson: Lesson): void {
-        // Xử lý khi user click vào lesson
-        // Ví dụ: navigate to lesson detail, start lesson, etc.
+    onLessonClick(lesson: LessonWithProgressResponse): void {
+        this.router.navigate(['/lessons', lesson.id]);
     }
 
-    // Helper methods
-    getTotalCompletedLessons(): number {
-        return this.sections.reduce((total, section) =>
-            total + section.lessonsCompleted, 0
-        );
-    }
-
-    getSectionProgress(section: Section): number {
-        return Math.round((section.lessonsCompleted / section.totalLessons) * 100);
-    }
-
-    getExpandedSections(): Section[] {
-        return this.sections.filter(section => section.isExpanded);
+    getBorderColor(status: string) {
+        switch (status) {
+            case 'COMPLETED': return '#00a88e';
+            case 'IN_PROGRESS': return '#f5a623';
+            case 'NOT_STARTED': return '#d9534f';
+            default: return '#ccc';
+        }
     }
 }

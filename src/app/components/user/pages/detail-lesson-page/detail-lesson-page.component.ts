@@ -37,7 +37,7 @@ export class DetailLessonPageComponent implements OnInit, AfterViewInit {
   comments$: Observable<Array<CommentResponse>> | undefined;
   replies$: Observable<Array<CommentResponse>> | undefined;
   commentContent: string = ''
-  parentCommentId: string = ''
+  parentCommentId: number = -1
 
   titleReport: string = ''
   reasonReport: string = ''

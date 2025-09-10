@@ -1,10 +1,7 @@
 export interface CommentRequest{
-  productId: number
-  userId: string
-  userName: string
-  userAvatarUrl: string
-  content: string
-  parentCommentId: string
+  lessonId: number;
+  content: string;
+  parentCommentId: number;
 }
 
 export interface CommentResponse{
