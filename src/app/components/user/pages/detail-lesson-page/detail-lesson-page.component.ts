@@ -8,8 +8,8 @@ import { TextareaModule } from 'primeng/textarea';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { CommentService } from '../../../../services/comment/comment.service';
-import { Observable } from 'rxjs';
-import { CommentResponse } from '../../../../models/Comment';
+import { Observable, take } from 'rxjs';
+import { CommentRequest, CommentResponse } from '../../../../models/Comment';
 import { CommonModule } from '@angular/common';
 import { LessonService } from '../../../../services/lesson/lesson.service';
 import { Lesson, Sentence } from '../../../../models/Lesson';
@@ -19,14 +19,13 @@ import { AvatarModule } from 'primeng/avatar';
 @Component({
   selector: 'app-detail-lesson-page',
   imports: [TabsModule, BadgeModule, FormsModule, CommonModule, DialogModule, ButtonModule, AvatarModule, FloatLabelModule,
-   InputTextModule, TextareaModule],
+    InputTextModule, TextareaModule],
   templateUrl: './detail-lesson-page.component.html',
   styleUrl: './detail-lesson-page.component.css'
 })
 export class DetailLessonPageComponent implements OnInit, AfterViewInit {
   @ViewChild('replyInput') replyInput!: ElementRef;
   @ViewChild('audioPlayer') audioPlayer!: ElementRef<HTMLAudioElement>;
-
 
   responsiveOptions: any[] | undefined;
   id = 0;
@@ -37,7 +36,8 @@ export class DetailLessonPageComponent implements OnInit, AfterViewInit {
   comments$: Observable<Array<CommentResponse>> | undefined;
   replies$: Observable<Array<CommentResponse>> | undefined;
   commentContent: string = ''
-  parentCommentId: number = -1
+  parentCommentId: number | null = null
+  selectedFile: File | null = null;
 
   titleReport: string = ''
   reasonReport: string = ''
@@ -82,7 +82,6 @@ export class DetailLessonPageComponent implements OnInit, AfterViewInit {
       })
     this.commentService.loadComments(this.id, 1, 10)
     this.comments$ = this.commentService.comments$
-    this.replies$ = this.commentService.replies$
     this.responsiveOptions = [
       {
         breakpoint: '1400px',
@@ -106,14 +105,14 @@ export class DetailLessonPageComponent implements OnInit, AfterViewInit {
       }
     ]
 
-    this.comments$.subscribe(comments => {
+    this.comments$.pipe(take(1)).subscribe(comments => {
       comments.forEach(c => {
-        if (c.replyCount != 0) {
-          this.expandedComments[c.id] = false
-          this.loadedReplyComment[c.id] = false
+        if (c.replyCount !== 0) {
+          this.expandedComments[c.id] = false;
+          this.loadedReplyComment[c.id] = false;
         }
-      })
-    })
+      });
+    });
   }
 
   resetExercise() {
@@ -239,12 +238,16 @@ export class DetailLessonPageComponent implements OnInit, AfterViewInit {
     return `${m}:${s < 10 ? '0' : ''}${s}`;
   }
 
-  toggleReplies(commentId: string) {
+  toggleReplies(commentId: number) {
     this.expandedComments[commentId] = !this.expandedComments[commentId];
-
+    console.log(this.expandedComments[commentId])
+    console.log(this.loadedReplyComment[commentId])
     if (!this.loadedReplyComment[commentId]) {
-      this.commentService.loadReplyComments(commentId);
+      this.commentService.loadChildComments(commentId);
       this.loadedReplyComment[commentId] = true
+
+      console.log(this.expandedComments[commentId])
+      console.log(this.loadedReplyComment[commentId])
     }
   }
 
@@ -256,11 +259,19 @@ export class DetailLessonPageComponent implements OnInit, AfterViewInit {
   }
 
   postComment() {
-    this.commentService.postComment(this.id, this.commentContent, this.parentCommentId)
+    let comment: CommentRequest = {
+      lessonId: this.id, content: this.commentContent, parentCommentId: this.parentCommentId
+    }
+    const formData = new FormData();
+    formData.append('comment', JSON.stringify(comment))
+    if (this.selectedFile !== null) {
+      formData.append('file', this.selectedFile, this.selectedFile.name)
+    }
+    this.commentService.postComment(formData)
     this.commentContent = ''
   }
 
-  reply(id: string, name: string) {
+  reply(id: number, name: string) {
     this.parentCommentId = id;
     this.replyInput.nativeElement.focus();
     this.commentContent = name + ' ';

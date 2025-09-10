@@ -1,17 +1,18 @@
 export interface CommentRequest{
   lessonId: number;
   content: string;
-  parentCommentId: number;
+  parentCommentId: number | null;
 }
 
 export interface CommentResponse{
-  id: string,
+  id: number,
   productId: number,
   userId: string,
   content: string,
   userName: string,
   userAvatarUrl: string,
   replyCount: number,
-  parentCommentId: string,
+  parentCommentId: number,
   createdAt: string
+  replies: CommentResponse[]
 }

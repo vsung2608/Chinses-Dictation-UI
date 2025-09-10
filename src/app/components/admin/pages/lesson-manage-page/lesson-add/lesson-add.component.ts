@@ -113,7 +113,6 @@ export class LessonAddComponent {
     }
   }
 
-  // Chỉ lưu file đầu tiên
   onFileSelect(event: any) {
     if (event.files && event.files.length > 0) {
       this.selectedFile = event.files[0];

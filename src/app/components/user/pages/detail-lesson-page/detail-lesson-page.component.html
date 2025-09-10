@@ -8,8 +8,8 @@
                     <p class="header-subtitle">Nghe và viết chính xác những gì bạn nghe được</p>
                     <div class="lesson-info">
                         <div class="info-item">
-                            <span class="info-number">{{ lesson?.displayOrder }}</span>
-                            <span class="info-label">Bài học</span>
+                            <span class="info-number">{{ lesson?.totalSentences }}</span>
+                            <span class="info-label">Số câu hỏi</span>
                         </div>
                         <div class="info-item">
                             <span class="info-number">{{ lesson?.level }}</span>
@@ -176,7 +176,7 @@
                                     <p-tabpanel value="2">
                                         <section class="comment-section" *ngIf="comments$ | async as comments">
                                             @for (comment of comments; track comment.id){
-                                            <div class="comment mb-2 mb-3" *ngIf="replies$ | async as replies">
+                                            <div class="comment mb-2 mb-3">
                                                 <div class="avatar-line-vertical" *ngIf="comment.replyCount > 0"></div>
                                                 <div class="d-flex mb-2">
                                                     <div class="avatar-wrapper position-relative me-2">
@@ -207,8 +207,7 @@
                                                     comment.replyCount + ' bình luận' }}
                                                 </div>
                                                 <div *ngIf="expandedComments[comment.id]">
-                                                    @for (reply of replies; track reply.id){
-                                                    @if(reply.parentCommentId === comment.id){
+                                                    @for (reply of comment.replies; track reply.id){
                                                     <div class="child-comment ms-5 mb-2">
                                                         <div class="dot-on-line"></div>
                                                         <div class="d-flex mb-2">
@@ -241,7 +240,6 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    }
                                                     }
                                                 </div>
                                             </div>
