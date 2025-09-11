@@ -26,8 +26,13 @@ export class LoginPageComponent {
     const password = this.password?.nativeElement.value;
 
     this.authService.login(username, password).subscribe({
-      next: () => {
-        this.router.navigateByUrl('/');
+      next: (data) => {
+        const roles: string[] = data.info.roles;
+        if (roles.includes('ADMIN')) {
+          this.router.navigateByUrl('/admin');
+        } else if (roles.includes('USER')) {
+          this.router.navigateByUrl('/');
+        }
       },
       error: (err) => {
         console.error('Login failed:', err);

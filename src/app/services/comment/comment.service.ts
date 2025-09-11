@@ -10,6 +10,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 export class CommentService {
 
   private static readonly COMMENT_URL = 'http://localhost:8080/api/v1/user/comments'
+  private static readonly ADMIN_COMMENT_URL = 'http://localhost:8080/api/v1/admin/comments'
   private data: DataPaged<CommentResponse> | undefined;
 
   private commentsSubject = new BehaviorSubject<CommentResponse[]>([]);
@@ -81,5 +82,12 @@ export class CommentService {
       }
       return comment;
     });
+  }
+
+  loadCommentOrderByDate(page: number, size: number){
+    if(page !== null && size !== null){
+      this.params = new HttpParams().set('page', page).set('size', size);
+    }
+    return this.httpClient.get<DataPaged<CommentResponse>>(CommentService.ADMIN_COMMENT_URL, {params: this.params});
   }
 }

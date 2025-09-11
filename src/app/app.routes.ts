@@ -12,6 +12,9 @@ import { UserManagePageComponent } from './components/admin/pages/user-manage-pa
 import { LessonAddComponent } from './components/admin/pages/lesson-manage-page/lesson-add/lesson-add.component';
 import { LessonListComponent } from './components/admin/pages/lesson-manage-page/lesson-list/lesson-list.component';
 import { CategoryPageComponent } from './components/user/pages/category-page/category-page.component';
+import { CommentManagePageComponent } from './components/admin/pages/comment-manage-page/comment-manage-page.component';
+import { RoleGuard } from './config/RoleGuard';
+import { ReportManagePageComponent } from './components/admin/pages/report-manage-page/report-manage-page.component';
 
 export const routes: Routes = [
   {
@@ -19,20 +22,23 @@ export const routes: Routes = [
     component: UserLayoutComponent,
     children: [
       { path: '', component: HomePageComponent },
-      { path: 'categories/:id', component: LessonPageComponent },
-      { path: 'lessons/:id', component: DetailLessonPageComponent },
-      { path: 'categories', component: CategoryPageComponent }
+      { path: 'categories/:id', component: LessonPageComponent, canActivate: [RoleGuard], data: { role: 'USER' } },
+      { path: 'lessons/:id', component: DetailLessonPageComponent, canActivate: [RoleGuard], data: { role: 'USER' } },
+      { path: 'categories', component: CategoryPageComponent, canActivate: [RoleGuard], data: { role: 'USER' } }
     ]
   },
 
   {
     path: 'admin',
     component: AdminLayoutComponent,
+    canActivate: [RoleGuard], data: { role: 'ADMIN' },
     children: [
       { path: '', component: DashboardPageComponent },
       { path: 'lessons/list', component: LessonListComponent },
       { path: 'lessons/add', component: LessonAddComponent },
-      { path: 'users', component: UserManagePageComponent }
+      { path: 'users', component: UserManagePageComponent },
+      { path: 'comments', component: CommentManagePageComponent },
+      { path: 'reports', component: ReportManagePageComponent }
     ]
   },
 

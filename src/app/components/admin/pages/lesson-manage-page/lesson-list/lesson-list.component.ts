@@ -76,6 +76,8 @@ export class LessonListComponent {
 
   selectedLevel: string = ''
 
+  loading: boolean = true;
+
   value2 = ''
 
   constructor(
@@ -109,6 +111,7 @@ export class LessonListComponent {
 
   loadDemoData() {
     this.lessonService.getLessonPaged(this.first + 1, this.rows).subscribe(page => {
+      this.loading = false
       this.lessons = page.data
       this.totalRecords = page.totalElements
       this.cd.markForCheck()

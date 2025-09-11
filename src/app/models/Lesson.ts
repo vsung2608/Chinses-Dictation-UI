@@ -58,5 +58,5 @@ export interface CategoryStatistics {
   isActive: string;
   totalLessons: number;
   totalStudents: number;
-  totalAttempt: number;
+  totalAttempts: number;
 }

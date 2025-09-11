@@ -36,8 +36,8 @@
           <p-splitbutton label="Save" [model]="items" rounded class="p-0 ms-3">
             <ng-template #content class="p-0">
             <span class="flex items-center font-bold" style="width: 30px; height: 30px;">
-                <img alt="logo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzwHFskk5Q5AH4B8g_ph6JZUrbotBovTkl8g&s"
-                     class="w-100 h-100 rounded-circle" />
+                <img alt="logo" [src]="avatar"
+                     class="w-100 h-100 rounded-circle bg-white" />
             </span>
             </ng-template>
             <ng-template #dropdownicon>

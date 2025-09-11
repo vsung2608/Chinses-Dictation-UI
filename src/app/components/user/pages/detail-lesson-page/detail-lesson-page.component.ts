@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BadgeModule } from 'primeng/badge';
 import { TabsModule } from 'primeng/tabs';
 import { DialogModule } from 'primeng/dialog';
@@ -8,22 +8,26 @@ import { TextareaModule } from 'primeng/textarea';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { CommentService } from '../../../../services/comment/comment.service';
-import { Observable, take } from 'rxjs';
+import { Observable, switchMap, take } from 'rxjs';
 import { CommentRequest, CommentResponse } from '../../../../models/Comment';
 import { CommonModule } from '@angular/common';
 import { LessonService } from '../../../../services/lesson/lesson.service';
 import { Lesson, Sentence } from '../../../../models/Lesson';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
+import { UserProgressRequest, UserProgressResponse } from '../../../../models/User';
+import { UserProgressService } from '../../../../services/user-progress/user-progress.service';
+import { AuthService } from '../../../../services/auth/auth.service';
+import { SentenceReportService } from '../../../../services/sentence-report/sentence-report.service';
 
 @Component({
   selector: 'app-detail-lesson-page',
   imports: [TabsModule, BadgeModule, FormsModule, CommonModule, DialogModule, ButtonModule, AvatarModule, FloatLabelModule,
-    InputTextModule, TextareaModule],
+    InputTextModule, TextareaModule, RouterLink],
   templateUrl: './detail-lesson-page.component.html',
   styleUrl: './detail-lesson-page.component.css'
 })
-export class DetailLessonPageComponent implements OnInit, AfterViewInit {
+export class DetailLessonPageComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('replyInput') replyInput!: ElementRef;
   @ViewChild('audioPlayer') audioPlayer!: ElementRef<HTMLAudioElement>;
 
@@ -41,9 +45,11 @@ export class DetailLessonPageComponent implements OnInit, AfterViewInit {
 
   titleReport: string = ''
   reasonReport: string = ''
+  isCompleted = false
 
   currentSentenceIndex = 0;
   currentSentence: Sentence | null = null;
+  userProgress!: UserProgressResponse
 
   showResult = false;
   isCorrect = false;
@@ -61,7 +67,13 @@ export class DetailLessonPageComponent implements OnInit, AfterViewInit {
 
   visibleReportDialog = false;
 
-  constructor(private route: ActivatedRoute, private commentService: CommentService, private lessonService: LessonService) { }
+  startTime!: number
+  endTime!: number
+  avatar: string = ''
+  fullName: string = ''
+
+  constructor(private route: ActivatedRoute, private commentService: CommentService, private authService: AuthService,
+    private lessonService: LessonService, private userProgressService: UserProgressService, private reportService: SentenceReportService) { }
 
   ngAfterViewInit(): void {
     const audio = this.audioPlayer.nativeElement;
@@ -74,12 +86,21 @@ export class DetailLessonPageComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.id = Number(this.route.snapshot.paramMap.get('id'));
-    this.lessonService.getDetailLessonById(this.id).pipe()
-      .subscribe(lesson => {
+    this.lessonService.getDetailLessonById(this.id).pipe(
+      switchMap(lesson => {
         this.lesson = lesson;
-        this.currentSentence = this.lesson?.sentences[0] || null;
-        this.duration = this.lesson?.estimatedDurationSeconds || 0;
+        this.duration = lesson.estimatedDurationSeconds || 0;
+        return this.userProgressService.getUserProgress(this.id);
       })
+    ).subscribe(userProgress => {
+      this.userProgress = userProgress;
+      this.currentSentenceIndex = userProgress.currentSentenceIndex;
+      this.currentSentence = this.lesson?.sentences[this.currentSentenceIndex] || null;
+      this.loadCurrentExercise();
+    });
+    this.avatar = this.authService.getUser()?.avatarUrl || '';
+    this.fullName = this.authService.getUser()?.fullName || '';
+
     this.commentService.loadComments(this.id, 1, 10)
     this.comments$ = this.commentService.comments$
     this.responsiveOptions = [
@@ -113,6 +134,20 @@ export class DetailLessonPageComponent implements OnInit, AfterViewInit {
         }
       });
     });
+    this.startTime = Date.now()
+  }
+
+  ngOnDestroy(): void {
+    if (!this.isCompleted) {
+      let request: UserProgressRequest = {
+        lessonId: this.id, status: this.userProgress.status, currentSentenceIndex: this.currentSentenceIndex,
+        totalAttempts: this.userProgress.totalAttempts, totalTimeSpentSeconds: this.userProgress.totalTimeSpentSeconds += Date.now() - this.startTime
+      }
+      this.userProgressService.updateUserProgress(request, this.userProgress.id).subscribe({
+        next: () => console.log('Progress saved'),
+        error: (err) => console.error('Save failed', err)
+      });
+    }
   }
 
   resetExercise() {
@@ -126,6 +161,15 @@ export class DetailLessonPageComponent implements OnInit, AfterViewInit {
     if (this.currentSentence?.chineseText.trim() === this.userAnswer.trim()) {
       this.isCorrect = true;
       this.showResult = true;
+
+      if (this.currentSentenceIndex + 1 === this.lesson?.totalSentences) {
+        let timeSpent = Date.now() - this.startTime
+        this.userProgressService.completeLesson(this.userProgress.id, timeSpent).subscribe({
+          next: () => console.log('Progress saved'),
+          error: (err) => console.error('Save failed', err)
+        });
+        this.isCompleted = true
+      }
     } else {
       this.higlightIncorrectAnswer();
       this.isIncorrect = true;
@@ -203,8 +247,9 @@ export class DetailLessonPageComponent implements OnInit, AfterViewInit {
     const audio = this.audioPlayer.nativeElement;
     if (!this.isPlaying) {
       this.isPlaying = !this.isPlaying;
-      const startTime = this.progress = this.currentSentence.startTimeSeconds || 0;
 
+      const startTime = this.currentSentence.startTimeSeconds || 0;
+      this.progress = this.currentSentence.startTimeSeconds || 0;
       audio.currentTime = startTime;
       audio.play();
 
@@ -287,5 +332,13 @@ export class DetailLessonPageComponent implements OnInit, AfterViewInit {
 
   reportComment(id: number) {
 
+  }
+
+  postReport(){
+    this.reportService.reportSentence(this.titleReport, this.reasonReport, this.currentSentence?.id)
+    .subscribe(() => {
+      this.titleReport = ''
+      this.reasonReport = ' '
+    })
   }
 }

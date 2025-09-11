@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LoginRequest, RefreshTokenRequest, RegisterRequest, TokenResponse } from '../../models/Auth';
+import { LoginRequest, RefreshTokenRequest, RegisterRequest, TokenResponse, UserBasicInfo } from '../../models/Auth';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { StorageService } from '../storage/storage.service';
@@ -38,9 +38,9 @@ export class AuthService {
 
   logout() {
     this.httpClient.post(AuthService.LOGOUT_URL, {})
-
     this.storage.removeItem('access_token');
     this.storage.removeItem('expires_at');
+    this.storage.removeItem('user')
   }
 
   refresh(): Observable<TokenResponse> {
@@ -52,10 +52,11 @@ export class AuthService {
   }
 
   saveTokens(data: TokenResponse) {
-    const expiresDate = Date.now() + data.expiresIn * 1000;
+    const expiresDate = Date.now() + data.expiresIn;
 
     this.storage.setItem('access_token', data.token);
     this.storage.setItem('expires_at', expiresDate.toString());
+    this.storage.setItem('user', JSON.stringify(data.info))
   }
 
   getAccessToken() {
@@ -77,5 +78,15 @@ export class AuthService {
     const expiration = this.getTokenExpiration(); // ms
     const buffer = bufferSeconds * 1000; // convert to ms
     return expiration - now < buffer;
+  }
+
+  getUser(): UserBasicInfo | null {
+    const userStr = this.storage.getItem('user');
+    return userStr ? JSON.parse(userStr) : null;
+  }
+
+  hasRole(role: string): boolean {
+    const user = this.getUser();
+    return user ? user.roles.includes(role) : false;
   }
 }

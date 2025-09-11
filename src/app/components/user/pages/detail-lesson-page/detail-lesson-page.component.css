@@ -540,6 +540,23 @@ button {
   margin-bottom: 30px;
 }
 
+.icon-completed{
+  color: #00a88e;
+  font-size: 80px;
+}
+
+.completed-btn{
+  padding: 10px 20px;
+  border-radius: 25px;
+  color: white;
+  background: #00a88e;
+  cursor: pointer;
+}
+
+.completed-btn:hover{
+  background: #00b99d;
+}
+
 /* Animation */
 @keyframes slideIn {
   from {

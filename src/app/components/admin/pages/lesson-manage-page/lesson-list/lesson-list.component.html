@@ -42,7 +42,7 @@
         </p-toolbar>
 
         <p-table #dt [value]="lessons" [rows]="10" [columns]="cols" [paginator]="false"
-            [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
+            [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']" [loading]="loading"
             [tableStyle]="{ 'min-width': '75rem' }" [(selection)]="selectedLessons" [rowHover]="true" dataKey="id"
             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
             [showCurrentPageReport]="true">
@@ -134,7 +134,6 @@
                             (click)="deleteLesson(lesson)">
                             <i class="pi pi-trash"></i>
                         </p-button>
-
                     </td>
                 </tr>
             </ng-template>
@@ -148,7 +147,7 @@
 </div>
 
 <p-dialog header="Thông tin bái học" [modal]="true" [(visible)]="visibleLessonDialog" [style]="{ width: '70rem' }"
-    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" class="lesson-dialog">
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" class="lesson-dialog" *ngIf="lesson">
     <div class="row">
         <div class="col-4 mb-3 mt-3 d-flex">
             <audio *ngIf="lesson" [src]="lesson.audioFilePath" ></audio>
@@ -161,33 +160,33 @@
         </div>
         <div class="col-4 mb-3 mt-3">
             <p-floatlabel variant="on">
-                <input pInputText id="on_label" [(ngModel)]="value2" autocomplete="off" />
+                <input pInputText id="on_label" [(ngModel)]="lesson.titleChinese" autocomplete="off" />
                 <label for="on_label">Tiêu đề (Tiếng Hán)</label>
             </p-floatlabel>
         </div>
         <div class="col-4 mb-3 mt-3">
             <p-floatlabel variant="on">
-                <input pInputText id="on_label" [(ngModel)]="value2" autocomplete="off" />
-                <label for="on_label">Tiêu đề (Tiếng Hán)</label>
-            </p-floatlabel>
-        </div>
-        <div class="col-4">
-            <p-floatlabel variant="on">
-                <input pInputText id="on_label" [(ngModel)]="value2" autocomplete="off" />
-                <label for="on_label">Tiêu đề (Tiếng Hán)</label>
-            </p-floatlabel>
-        </div>
-        <div class="col-4">
-            <p-floatlabel variant="on">
-                <input pInputText id="on_label" [(ngModel)]="value2" autocomplete="off" />
+                <input pInputText id="on_label" [(ngModel)]="lesson.titleVietnamese" autocomplete="off" />
                 <label for="on_label">Tiêu đề (Tiếng Việt)</label>
+            </p-floatlabel>
+        </div>
+        <div class="col-4">
+            <p-floatlabel variant="on">
+                <input pInputText id="on_label" [(ngModel)]="lesson.level" autocomplete="off" />
+                <label for="on_label">Cấp độ</label>
+            </p-floatlabel>
+        </div>
+        <div class="col-4">
+            <p-floatlabel variant="on">
+                <input pInputText id="on_label" [(ngModel)]="lesson.totalSentences" autocomplete="off" />
+                <label for="on_label">Số câu</label>
             </p-floatlabel>
         </div>
         <div class="col-4">
             <p-floatlabel class="w-full md:w-56" variant="on">
                 <p-select [options]="levels" [(ngModel)]="selectedLevel" [checkmark]="true" [showClear]="true"
                     class="w-100 p-1" />
-                <label for="on_label">Tiêu đề (Tiếng Việt)</label>
+                <label for="on_label">Tổng thời gian</label>
             </p-floatlabel>
         </div>
     </div>

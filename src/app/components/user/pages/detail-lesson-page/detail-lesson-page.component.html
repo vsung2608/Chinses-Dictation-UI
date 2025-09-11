@@ -265,8 +265,8 @@
 <p-dialog  [(visible)]="visibleReportDialog" [modal]="true" [style]="{ width: '25rem' }">
     <ng-template #header>
         <div class="d-flex align-items-center gap-2">
-            <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" shape="circle" />
-            <span class="fw-bold whitespace-nowrap">Amy Elsner</span>
+            <p-avatar [image]="avatar" shape="circle" />
+            <span class="fw-bold whitespace-nowrap">{{fullName}}</span>
         </div>
     </ng-template>
     <span class="text-surface-500 dark:text-surface-400 block mb-8">Báo cáo lỗi về câu trong bài</span>
@@ -281,6 +281,14 @@
 
     <ng-template #footer>
         <p-button label="Hủy" [text]="true" severity="secondary" (click)="visibleReportDialog = false" />
-        <p-button label="Gửi" [outlined]="true" severity="secondary" (click)="visibleReportDialog = false" />
+        <p-button label="Gửi" [outlined]="true" severity="secondary" (click)="postReport()" />
     </ng-template>
+</p-dialog>
+
+<p-dialog header="Thông báo" [modal]="true" [(visible)]="isCompleted" [style]="{ width: '40rem' }">
+    <div class="text-center">
+        <div><i class="fa-solid fa-circle-check icon-completed"></i></div>
+        <div class="mb-5 mt-3 fw-bold fs-3">🎉Chúc mừng bạn đã hoàn thành bài học🎉</div>
+        <a routerLink="/categories" class="completed-btn">Học bài khác</a>
+    </div>
 </p-dialog>

@@ -20,4 +20,12 @@ export class UserService {
     }
     return this.httpClient.get<DataPaged<UserResponse>>(this.USER_API_URL, { params: this.params });
   }
+
+  blockUser(id: number){
+    return this.httpClient.patch(`${this.USER_API_URL}/block/${id}`, {})
+  }
+
+  unblockUser(id: number){
+    return this.httpClient.patch(`${this.USER_API_URL}/un-block/${id}`, {})
+  }
 }

@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { Table, TableModule } from 'primeng/table';
-import { MenuItem, MessageService, PrimeIcons } from 'primeng/api';
+import { MenuItem, PrimeIcons } from 'primeng/api';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { Event, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -14,32 +14,20 @@ import { DropdownModule } from 'primeng/dropdown';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { IconFieldModule } from 'primeng/iconfield';
 import { FormsModule } from '@angular/forms';
-import { UserResponse } from '../../../../models/User';
-import { UserService } from '../../../../services/user/user.service';
-
-export interface Country {
-  name?: string;
-  code?: string;
-}
-
-export interface Representative {
-  name?: string;
-  image?: string;
-}
+import { SentenceReportService } from '../../../../services/sentence-report/sentence-report.service';
+import { SentenceReportResponse } from '../../../../models/SentenceReport';
 
 @Component({
-  selector: 'app-user-manage-page',
+  selector: 'app-report-manage-page',
   imports: [BreadcrumbModule, RouterLink, CommonModule, ToastModule, TableModule, ButtonModule, ProgressBarModule,
     TagModule, InputIconModule, SliderModule, DropdownModule, MultiSelectModule, IconFieldModule, FormsModule],
-  templateUrl: './user-manage-page.component.html',
-  styleUrl: './user-manage-page.component.css'
+  templateUrl: './report-manage-page.component.html',
+  styleUrl: './report-manage-page.component.css'
 })
-export class UserManagePageComponent {
-  users!: UserResponse[];
+export class ReportManagePageComponent {
+  reports!: SentenceReportResponse[]
 
-  selectedUsers!: UserResponse[];
-
-  representatives!: Representative[];
+  selectedReports!: SentenceReportResponse[];
 
   statuses!: any[];
 
@@ -59,12 +47,12 @@ export class UserManagePageComponent {
 
   @ViewChild('dt') dt!: Table;
 
-  constructor(private userService: UserService, private cd: ChangeDetectorRef, private messageService: MessageService) { }
+  constructor(private sentenReportService: SentenceReportService, private cd: ChangeDetectorRef) { }
 
   ngOnInit() {
-    this.userService.getUserPaged(this.first + 1, this.rows)
+    this.sentenReportService.loadReportPaged(this.first + 1, this.rows)
       .subscribe(pageData => {
-        this.users = pageData.data
+        this.reports = pageData.data
         this.loading = false
         this.totalRecords = pageData.totalElements
         this.cd.markForCheck()
@@ -75,20 +63,17 @@ export class UserManagePageComponent {
 
   getSeverity(status: string) {
     switch (status) {
-      case 'DELETED':
-        return 'danger';
-
-      case 'ACTIVE':
-        return 'success';
-
-      case 'INACTIVE':
+      case 'PENDING':
         return 'info';
 
-      case 'LOCKED':
+      case 'INREVIEW':
         return 'warn';
 
-      case 'BANNED':
-        return undefined;
+      case 'RESOLVED':
+        return 'success';
+
+      case 'REJECTED':
+        return 'danger';
 
       default:
         return undefined;
@@ -100,19 +85,6 @@ export class UserManagePageComponent {
     this.dt?.filterGlobal(value, 'contains');
   }
 
-  clear(event: Event) {
+  
 
-  }
-
-  lockUser(id: number){
-    this.userService.blockUser(id).subscribe(() => {
-      this.messageService.add({ severity: 'success', summary: 'Hệ thống', detail: "Đã chặn người dùng có ID::" + id, life: 3000 })
-    });
-  }
-
-  unlockUser(id: number){
-    this.userService.unblockUser(id).subscribe(() => {
-      this.messageService.add({ severity: 'success', summary: 'Hệ thống', detail: "Đã bỏ chặn người dùng có ID::" + id, life: 3000 })
-    });
-  }
 }

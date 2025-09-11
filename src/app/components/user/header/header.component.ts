@@ -34,41 +34,42 @@ export class HeaderComponent implements OnInit{
   avartar: string = "ajhsdasdasda";
   logined: boolean = true;
   visible: boolean = false;
+  avatar: string = ''
 
   constructor(private router: Router, private authService: AuthService) {
     this.items = [
       {
-        label: 'Light Mode',
+        label: 'Chế độ sáng',
         icon: 'pi pi-power-off',
         command: () => {
-          this.backHomePage()
+          
         }
       },
       {
-        label: 'Dark Mode',
+        label: 'Chế độ tối',
         icon: 'pi pi-refresh',
         command: () => {
-          this.navigateToUpdateInformationPage()
+          
         }
       },
       {
         separator: true,
       },
       {
-        label: 'Delete',
+        label: 'Thông tin cá nhân',
         icon: PrimeIcons.BELL,
         command: () => {
-          this.displayNotification()
+          
         }
       },
       {
         separator: true,
       },
       {
-        label: 'Quit',
+        label: 'Đăng xuất tài khoản',
         icon: 'pi pi-power-off',
         command: () => {
-          this.backHomePage()
+          this.logOut()
         }
       }
     ]
@@ -77,14 +78,15 @@ export class HeaderComponent implements OnInit{
     if(this.authService.isTokenExpired()){
       this.logined = false
     }
+    this.avatar = this.authService.getUser()?.avatarUrl || '';
   }
 
   navigateToSignInPage(){
-    this.router.navigateByUrl("/auth/sign-in")
+    this.router.navigateByUrl("/auth/login")
   }
 
   navigateToSignUpPage(){
-    this.router.navigateByUrl("/auth/sign-up")
+    this.router.navigateByUrl("/auth/register")
   }
 
   navigateToCartPage(){
@@ -99,7 +101,8 @@ export class HeaderComponent implements OnInit{
 
   }
 
-  backHomePage(){
-
+  logOut(){
+    this.authService.logout()
+    this.router.navigateByUrl('/auth/login')
   }
 }
